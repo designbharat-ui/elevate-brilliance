@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,12 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Contact Us - Get Free Elevator Quote"
+        description="Contact Rising Star Elevator for free consultation and quote. 24/7 emergency support available. Delhi NCR based elevator company serving all of India."
+        keywords="contact elevator company, elevator quote, lift enquiry, elevator service Delhi, lift installation contact"
+        canonicalUrl="/contact"
+      />
       <Header />
       <main>
         <section className="relative py-24 bg-gradient-hero">

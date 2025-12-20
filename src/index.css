@@ -4,6 +4,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Blog Content Styles */
+.blog-content h2 {
+  @apply font-display text-2xl font-bold text-foreground mt-8 mb-4;
+}
+.blog-content h3 {
+  @apply font-display text-xl font-semibold text-foreground mt-6 mb-3;
+}
+.blog-content p {
+  @apply text-muted-foreground mb-4 leading-relaxed;
+}
+.blog-content p.lead {
+  @apply text-lg text-foreground mb-6;
+}
+.blog-content ul {
+  @apply list-disc list-inside space-y-2 mb-6 text-muted-foreground;
+}
+.blog-content li {
+  @apply leading-relaxed;
+}
+.blog-content table {
+  @apply w-full border-collapse mb-6;
+}
+.blog-content th, .blog-content td {
+  @apply border border-border px-4 py-2 text-left;
+}
+.blog-content th {
+  @apply bg-secondary font-semibold text-foreground;
+}
+
 /* Rising Star Elevator - Luxury Design System
    Inspired by gold, marble, and premium elevator interiors */
 
