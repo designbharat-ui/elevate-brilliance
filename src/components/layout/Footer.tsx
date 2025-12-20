@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Youtube, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const quickLinks = [
   { name: "About Us", href: "/about" },
@@ -9,6 +8,7 @@ const quickLinks = [
   { name: "Services", href: "/services" },
   { name: "Projects", href: "/projects" },
   { name: "Gallery", href: "/gallery" },
+  { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -153,6 +153,7 @@ export function Footer() {
             <div className="flex gap-6">
               <Link to="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link>
               <Link to="/terms" className="hover:text-gold transition-colors">Terms of Service</Link>
+              <Link to="/sitemap" className="hover:text-gold transition-colors">Sitemap</Link>
             </div>
           </div>
         </div>

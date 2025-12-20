@@ -2,12 +2,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, User, Clock, Share2, ArrowRight } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, ArrowRight } from "lucide-react";
 import { blogPosts } from "./Blog";
-import elevator1 from "@/assets/elevator-1.jpeg";
-import elevator2 from "@/assets/elevator-2.jpeg";
-import elevator3 from "@/assets/elevator-3.jpeg";
-import elevator4 from "@/assets/elevator-4.jpeg";
+import heroBlog from "@/assets/hero-blog.jpg";
 
 const blogContent: Record<string, {
   content: React.ReactNode;
@@ -207,32 +204,12 @@ const blogContent: Record<string, {
         <h2>Key Differences</h2>
 
         <h3>1. Space Requirements</h3>
-        <table className="comparison-table">
-          <thead>
-            <tr>
-              <th>Aspect</th>
-              <th>MRL</th>
-              <th>Traditional</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Machine Room</td>
-              <td>Not required</td>
-              <td>Required (15-20 sq.m)</td>
-            </tr>
-            <tr>
-              <td>Headroom</td>
-              <td>Lower (3.6-4.2m)</td>
-              <td>Higher (4.5-5.5m)</td>
-            </tr>
-            <tr>
-              <td>Building Height</td>
-              <td>Saves 1 floor height</td>
-              <td>Additional height needed</td>
-            </tr>
-          </tbody>
-        </table>
+        <ul>
+          <li><strong>MRL:</strong> No machine room required, saves 15-20 sq.m of space</li>
+          <li><strong>Traditional:</strong> Requires machine room (15-20 sq.m)</li>
+          <li><strong>MRL Headroom:</strong> Lower (3.6-4.2m)</li>
+          <li><strong>Traditional Headroom:</strong> Higher (4.5-5.5m)</li>
+        </ul>
 
         <h3>2. Energy Efficiency</h3>
         <ul>
@@ -443,21 +420,47 @@ export default function BlogPost() {
       />
       <Header />
       <main>
-        {/* Breadcrumb */}
-        <section className="bg-secondary py-4">
-          <div className="container">
-            <div className="flex items-center gap-2 text-sm">
+        {/* Hero Section */}
+        <section className="relative py-24 bg-gradient-hero overflow-hidden">
+          <div className="absolute inset-0">
+            <img src={heroBlog} alt={post.title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
+          </div>
+          <div className="container relative z-10">
+            <div className="flex items-center gap-2 text-sm mb-6">
               <Link
                 to="/blog"
-                className="text-muted-foreground hover:text-gold transition-colors flex items-center gap-1"
+                className="text-primary-foreground/70 hover:text-gold transition-colors flex items-center gap-1"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Blog
               </Link>
-              <span className="text-muted-foreground">/</span>
-              <span className="text-foreground font-medium line-clamp-1">
+              <span className="text-primary-foreground/50">/</span>
+              <span className="text-gold font-medium line-clamp-1">
                 {post.title}
               </span>
+            </div>
+            <div className="max-w-3xl">
+              <span className="bg-gold/20 text-gold text-sm font-medium px-3 py-1 rounded-full">
+                {post.category}
+              </span>
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mt-4 mb-6">
+                {post.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-6 text-primary-foreground/70">
+                <span className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {post.author}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  {post.date}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  {post.readTime}
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -466,30 +469,6 @@ export default function BlogPost() {
         <article className="section-padding bg-background">
           <div className="container">
             <div className="max-w-3xl mx-auto">
-              {/* Header */}
-              <div className="mb-8">
-                <span className="bg-gold/10 text-gold text-sm font-medium px-3 py-1 rounded-full">
-                  {post.category}
-                </span>
-                <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6">
-                  {post.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
-                    {post.author}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {post.date}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {post.readTime}
-                  </span>
-                </div>
-              </div>
-
               {/* Featured Image */}
               <div className="aspect-video rounded-lg overflow-hidden mb-8">
                 <img
@@ -503,64 +482,66 @@ export default function BlogPost() {
               <div className="prose prose-lg max-w-none blog-content">
                 {content.content}
               </div>
-
-              {/* Share */}
-              <div className="border-t border-b border-border py-6 mt-8 flex items-center justify-between">
-                <span className="font-medium text-foreground">Share this article:</span>
-                <div className="flex items-center gap-4">
-                  <button className="text-muted-foreground hover:text-gold transition-colors">
-                    <Share2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="bg-primary rounded-lg p-8 mt-8 text-center">
-                <h3 className="font-display text-2xl font-bold text-primary-foreground mb-4">
-                  Need Expert Elevator Services?
-                </h3>
-                <p className="text-primary-foreground/80 mb-6">
-                  Contact Rising Star Elevator for professional installation, maintenance, and repair services.
-                </p>
-                <Link to="/contact" className="btn-gold inline-flex items-center">
-                  Get Free Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
             </div>
-
-            {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-              <div className="max-w-3xl mx-auto mt-16">
-                <h2 className="font-display text-2xl font-bold text-foreground mb-8">
-                  Related <span className="text-gradient-gold">Articles</span>
-                </h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {relatedPosts.map((relatedPost) => (
-                    <Link
-                      key={relatedPost.slug}
-                      to={`/blog/${relatedPost.slug}`}
-                      className="group bg-card border border-border rounded-lg overflow-hidden card-hover"
-                    >
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={relatedPost.image}
-                          alt={relatedPost.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-gold transition-colors line-clamp-2">
-                          {relatedPost.title}
-                        </h3>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </article>
+
+        {/* Related Posts */}
+        <section className="section-padding bg-secondary">
+          <div className="container">
+            <h2 className="font-display text-2xl font-bold text-foreground mb-8">
+              Related <span className="text-gradient-gold">Articles</span>
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {relatedPosts.map((relatedPost) => (
+                <Link
+                  key={relatedPost.slug}
+                  to={`/blog/${relatedPost.slug}`}
+                  className="group bg-card border border-border rounded-lg overflow-hidden card-hover"
+                >
+                  <div className="aspect-video overflow-hidden">
+                    <img
+                      src={relatedPost.image}
+                      alt={relatedPost.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <span className="bg-gold/10 text-gold text-xs font-medium px-3 py-1 rounded-full">
+                      {relatedPost.category}
+                    </span>
+                    <h3 className="font-display text-lg font-bold text-foreground mt-3 mb-2 group-hover:text-gold transition-colors line-clamp-2">
+                      {relatedPost.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm line-clamp-2">
+                      {relatedPost.excerpt}
+                    </p>
+                    <span className="text-gold font-medium text-sm flex items-center gap-1 mt-4 group-hover:gap-2 transition-all">
+                      Read More
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="section-padding bg-primary">
+          <div className="container text-center">
+            <h2 className="font-display text-3xl font-bold text-primary-foreground mb-4">
+              Need Expert <span className="text-gradient-gold">Advice?</span>
+            </h2>
+            <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+              Our elevator experts are ready to help you with any questions about vertical transportation.
+            </p>
+            <Link to="/contact" className="btn-gold inline-flex items-center">
+              Contact Us
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

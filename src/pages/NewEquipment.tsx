@@ -1,8 +1,10 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Building2, CheckCircle, ArrowRight, Shield, Wrench, Clock, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import heroProducts from "@/assets/hero-products.jpg";
 
 const offerings = [
   {
@@ -40,12 +42,30 @@ const strengths = [
 ];
 
 export default function NewEquipment() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "New Elevator Equipment - Rising Star Elevator",
+    "description": "Complete range of traction elevators and escalators for all segments.",
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="New Equipment Business - Elevator Supply & Installation"
+        description="Complete range of traction elevators & escalators. IS compliant car sizes, residential to hospital elevators, supply, installation, testing & commissioning services."
+        keywords="new elevator, elevator supply, lift installation, traction elevator India, escalator supplier Delhi NCR"
+        canonicalUrl="/new-equipment"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-hero overflow-hidden">
+          <div className="absolute inset-0">
+            <img src={heroProducts} alt="New Equipment Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
+          </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
               <div className="w-20 h-20 bg-gold/20 rounded-lg flex items-center justify-center mb-6">
@@ -185,7 +205,7 @@ export default function NewEquipment() {
               Contact us for complete specifications and customized solutions for your building.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/query" className="btn-gold inline-flex items-center justify-center">
+              <Link to="/contact" className="btn-gold inline-flex items-center justify-center">
                 Get Quotation
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

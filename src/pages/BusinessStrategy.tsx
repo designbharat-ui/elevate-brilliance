@@ -1,7 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Building, Briefcase, ShoppingBag, Hospital, Hotel, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heroAbout from "@/assets/hero-about.jpg";
 
 const segments = [
   {
@@ -47,14 +49,29 @@ const segments = [
 ];
 
 export default function BusinessStrategy() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Business Strategy - Rising Star Elevator",
+    "description": "Our market segmentation strategy for residential, commercial, retail, medical, and hospitality sectors.",
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Business Strategy - Market Segmentation"
+        description="Rising Star Elevator's business strategy focuses on market segmentation for residential, office, retail, medical, and hotel segments with customized elevator solutions."
+        keywords="elevator business strategy, lift market segmentation, residential elevator, commercial elevator, hospital lift, hotel elevator India"
+        canonicalUrl="/business-strategy"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-hero overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
+          <div className="absolute inset-0">
+            <img src={heroAbout} alt="Business Strategy Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
