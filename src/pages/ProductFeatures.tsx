@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { CheckCircle, Shield, Cpu, Eye, Gauge, Phone, Lightbulb, Volume2, AlertTriangle, Radio } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
+import { CheckCircle, Shield, Cpu, Eye, Gauge, Phone, Lightbulb, AlertTriangle, Radio } from "lucide-react";
+import heroProducts from "@/assets/hero-products.jpg";
 
 const features = [
   {
@@ -73,14 +75,29 @@ const safetyStandards = [
 ];
 
 export default function ProductFeatures() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Elevator Safety Features - Rising Star Elevator",
+    "description": "10 essential safety features in our elevators including microprocessor control, infrared curtain, and intercom systems.",
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Product Features - 10 Essential Safety Aspects"
+        description="Discover 10 essential elevator safety features including microprocessor control, infrared curtain, load weighing device, and intercom systems. IS 14665 & EN 81 compliant."
+        keywords="elevator safety features, lift safety, microprocessor elevator, infrared door sensor, IS 14665, EN 81 compliant elevator India"
+        canonicalUrl="/product-features"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-hero overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
+          <div className="absolute inset-0">
+            <img src={heroProducts} alt="Product Features Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">

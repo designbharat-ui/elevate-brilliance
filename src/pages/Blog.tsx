@@ -7,6 +7,7 @@ import elevator1 from "@/assets/elevator-1.jpeg";
 import elevator2 from "@/assets/elevator-2.jpeg";
 import elevator3 from "@/assets/elevator-3.jpeg";
 import elevator4 from "@/assets/elevator-4.jpeg";
+import heroBlog from "@/assets/hero-blog.jpg";
 
 export const blogPosts = [
   {
@@ -78,6 +79,10 @@ export default function Blog() {
       <main>
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-hero">
+          <div className="absolute inset-0">
+            <img src={heroBlog} alt="Blog Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
+          </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
               <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
@@ -98,18 +103,19 @@ export default function Blog() {
           <div className="container">
             <div className="grid md:grid-cols-2 gap-8">
               {blogPosts.map((post) => (
-                <Link
+                <article
                   key={post.slug}
-                  to={`/blog/${post.slug}`}
                   className="group bg-card border border-border rounded-lg overflow-hidden card-hover"
                 >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
+                  <Link to={`/blog/${post.slug}`} className="block">
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    </div>
+                  </Link>
                   <div className="p-6">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="bg-gold/10 text-gold text-xs font-medium px-3 py-1 rounded-full">
@@ -120,9 +126,11 @@ export default function Blog() {
                         {post.readTime}
                       </span>
                     </div>
-                    <h2 className="font-display text-xl font-bold text-foreground mb-3 group-hover:text-gold transition-colors line-clamp-2">
-                      {post.title}
-                    </h2>
+                    <Link to={`/blog/${post.slug}`}>
+                      <h2 className="font-display text-xl font-bold text-foreground mb-3 group-hover:text-gold transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                    </Link>
                     <p className="text-muted-foreground mb-4 line-clamp-2">
                       {post.excerpt}
                     </p>
@@ -137,13 +145,16 @@ export default function Blog() {
                           {post.date}
                         </span>
                       </div>
-                      <span className="text-gold font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      <Link 
+                        to={`/blog/${post.slug}`}
+                        className="text-gold font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all"
+                      >
                         Read More
                         <ArrowRight className="w-4 h-4" />
-                      </span>
+                      </Link>
                     </div>
                   </div>
-                </Link>
+                </article>
               ))}
             </div>
           </div>

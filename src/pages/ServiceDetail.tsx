@@ -1,8 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle, Phone, Clock, Shield, Award, Wrench, Settings, PenTool, RotateCcw, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, CheckCircle, Phone, Wrench, Settings, PenTool, RotateCcw, FileText } from "lucide-react";
+import heroServices from "@/assets/hero-services.jpg";
 
 const servicesData: Record<string, {
   name: string;
@@ -12,6 +13,8 @@ const servicesData: Record<string, {
   benefits: string[];
   includes: string[];
   process: { step: string; title: string; description: string }[];
+  seoKeywords: string;
+  seoDescription: string;
 }> = {
   "amc": {
     name: "AMC Services",
@@ -42,6 +45,8 @@ const servicesData: Record<string, {
       { step: "03", title: "Contract Signing", description: "Transparent pricing with clear terms and SLAs" },
       { step: "04", title: "Regular Service", description: "Scheduled maintenance visits as per the agreed plan" },
     ],
+    seoKeywords: "elevator AMC, lift annual maintenance contract, elevator service contract India, lift AMC Delhi NCR",
+    seoDescription: "Comprehensive elevator AMC services with 24/7 support, monthly maintenance, genuine parts. Get affordable AMC from Rising Star Elevator.",
   },
   "maintenance": {
     name: "Lift Maintenance",
@@ -72,6 +77,8 @@ const servicesData: Record<string, {
       { step: "03", title: "Service", description: "Preventive maintenance and minor adjustments" },
       { step: "04", title: "Report", description: "Detailed service report with recommendations" },
     ],
+    seoKeywords: "lift maintenance, elevator preventive maintenance, lift service India, elevator upkeep",
+    seoDescription: "Professional lift maintenance services for all elevator brands. Preventive maintenance, safety inspections, expert technicians. Call Rising Star Elevator.",
   },
   "repair": {
     name: "Repair Services",
@@ -102,6 +109,8 @@ const servicesData: Record<string, {
       { step: "03", title: "Quote", description: "Transparent quote for parts and labor" },
       { step: "04", title: "Repair", description: "Swift repair with quality parts" },
     ],
+    seoKeywords: "lift repair, elevator repair service, emergency lift repair, elevator breakdown service India",
+    seoDescription: "24/7 elevator repair services with quick response. All brands, genuine parts, warranty on repairs. Contact Rising Star Elevator.",
   },
   "modernization": {
     name: "Elevator Modernization",
@@ -132,6 +141,8 @@ const servicesData: Record<string, {
       { step: "03", title: "Execution", description: "Phased modernization with minimal disruption" },
       { step: "04", title: "Handover", description: "Testing, training, and warranty handover" },
     ],
+    seoKeywords: "elevator modernization, lift upgrade, old elevator renovation, elevator refurbishment India",
+    seoDescription: "Modernize your old elevators with new technology, safety features & aesthetics. Cost-effective upgrades from Rising Star Elevator.",
   },
   "customization": {
     name: "Customization Solutions",
@@ -162,6 +173,8 @@ const servicesData: Record<string, {
       { step: "03", title: "Approval", description: "Review and approve final designs" },
       { step: "04", title: "Installation", description: "Expert installation of custom elements" },
     ],
+    seoKeywords: "custom elevator design, bespoke lift interiors, elevator cabin customization, luxury elevator design India",
+    seoDescription: "Bespoke elevator customization with premium interiors, custom designs & branded signalization. Get unique lift designs from Rising Star Elevator.",
   },
 };
 
@@ -169,27 +182,43 @@ export default function ServiceDetail() {
   const { slug } = useParams();
   const service = servicesData[slug || ""] || servicesData["amc"];
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": service.name,
+    "description": service.description,
+    "provider": {
+      "@type": "Organization",
+      "name": "Rising Star Elevator Pvt. Ltd.",
+    },
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title={`${service.name} - ${service.tagline}`}
+        description={service.seoDescription || service.description}
+        keywords={service.seoKeywords || `${service.name}, elevator service, lift maintenance`}
+        canonicalUrl={`/services/${slug}`}
+        structuredData={structuredData}
+      />
       <Header />
       <main>
-        {/* Breadcrumb */}
-        <section className="bg-secondary py-4">
-          <div className="container">
-            <div className="flex items-center gap-2 text-sm">
-              <Link to="/services" className="text-muted-foreground hover:text-gold transition-colors flex items-center gap-1">
+        {/* Hero Section */}
+        <section className="relative py-24 bg-gradient-hero overflow-hidden">
+          <div className="absolute inset-0">
+            <img src={heroServices} alt={service.name} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
+          </div>
+          <div className="container relative z-10">
+            <div className="flex items-center gap-2 text-sm mb-6">
+              <Link to="/services" className="text-primary-foreground/70 hover:text-gold transition-colors flex items-center gap-1">
                 <ArrowLeft className="w-4 h-4" />
                 Services
               </Link>
-              <span className="text-muted-foreground">/</span>
-              <span className="text-foreground font-medium">{service.name}</span>
+              <span className="text-primary-foreground/50">/</span>
+              <span className="text-gold font-medium">{service.name}</span>
             </div>
-          </div>
-        </section>
-
-        {/* Hero Section */}
-        <section className="relative py-24 bg-gradient-hero overflow-hidden">
-          <div className="container relative z-10">
             <div className="max-w-3xl">
               <div className="w-20 h-20 bg-gold/20 rounded-lg flex items-center justify-center mb-6">
                 <service.icon className="w-10 h-10 text-gold" />
@@ -287,7 +316,7 @@ export default function ServiceDetail() {
                 Contact us today for a free consultation and quote for {service.name.toLowerCase()}.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/query" className="btn-gold inline-flex items-center justify-center">
+                <Link to="/contact" className="btn-gold inline-flex items-center justify-center">
                   Get Free Quote
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

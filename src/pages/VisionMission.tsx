@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Eye, Heart, Target, ArrowRight } from "lucide-react";
+import heroAbout from "@/assets/hero-about.jpg";
 
 const sections = [
   {
@@ -33,14 +35,29 @@ const commitments = [
 ];
 
 export default function VisionMission() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "Vision, Mission & Values - Rising Star Elevator",
+    "description": "Our guiding principles that drive us to deliver excellence in every elevator and escalator project.",
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Vision, Mission & Values"
+        description="Discover Rising Star Elevator's vision, mission, and core values. We are committed to ethical, transparent business practices and customer satisfaction in elevator solutions."
+        keywords="elevator company vision, lift company mission, elevator values, Rising Star Elevator mission, ethical elevator company"
+        canonicalUrl="/vision-mission"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-hero overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
+          <div className="absolute inset-0">
+            <img src={heroAbout} alt="Vision Mission Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">

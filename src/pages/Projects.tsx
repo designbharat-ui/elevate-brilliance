@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MapPin, Building } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
+import { MapPin } from "lucide-react";
+import heroProjects from "@/assets/hero-projects.jpg";
 
 const projects = [
   { name: "Wave Infratech", location: "Noida", type: "Commercial", specs: "Multiple MRL Elevators", status: "Completed" },
@@ -12,11 +14,29 @@ const projects = [
 ];
 
 export default function Projects() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Rising Star Elevator Projects",
+    "description": "3000+ successful elevator installations across India including Wave Infratech, Parker Estate and more.",
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Projects - 3000+ Successful Installations"
+        description="View Rising Star Elevator's completed projects including Wave Infratech Noida, Parker Estate Sonepat, and 3000+ successful elevator installations across Delhi NCR."
+        keywords="elevator projects India, lift installation Delhi, elevator Noida, lift Gurgaon, commercial elevator projects, residential lift installation"
+        canonicalUrl="/projects"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         <section className="relative py-24 bg-gradient-hero">
+          <div className="absolute inset-0">
+            <img src={heroProjects} alt="Projects Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/85" />
+          </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
               <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Projects</span>
