@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import elevator1 from "@/assets/elevator-1.jpeg";
@@ -27,6 +28,12 @@ const productCategories = [
 export default function Products() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Elevators & Escalators - Complete Product Range"
+        description="Explore our complete range of elevators including home lifts, passenger lifts, hospital elevators, MRL lifts, escalators, and moving walks. IS-compliant solutions."
+        keywords="home lift, passenger elevator, hospital lift, MRL elevator, escalator, moving walk, capsule lift, freight elevator India"
+        canonicalUrl="/products"
+      />
       <Header />
       <main>
         {/* Hero Section */}

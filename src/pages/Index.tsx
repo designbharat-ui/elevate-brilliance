@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
 import { StatsSection } from "@/components/sections/StatsSection";
@@ -8,8 +9,26 @@ import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { WhyChooseSection } from "@/components/sections/WhyChooseSection";
 
 const Index = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Rising Star Elevator Pvt. Ltd.",
+    "url": "https://risingstarelevator.com",
+    "logo": "https://risingstarelevator.com/logo.png",
+    "description": "Premium elevator and escalator solutions in India with 21+ years experience",
+    "address": { "@type": "PostalAddress", "addressLocality": "Delhi NCR", "addressCountry": "IN" },
+    "contactPoint": { "@type": "ContactPoint", "telephone": "+91-99999-99999", "contactType": "sales" }
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Premium Elevator & Escalator Solutions in India"
+        description="Rising Star Elevator - 21+ years of excellence in elevators, escalators, and vertical transportation. 3000+ installations across India. Get free quote today!"
+        keywords="elevator company India, lift manufacturer, escalator supplier, home lift, passenger elevator, hospital lift, MRL elevator, Delhi NCR"
+        canonicalUrl="/"
+        structuredData={structuredData}
+      />
       <Header />
       <main>
         <HeroSection />

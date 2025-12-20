@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Wrench, Settings, PenTool, RotateCcw, FileText, ArrowRight, Clock, Shield, Award } from "lucide-react";
 
@@ -50,6 +51,12 @@ const whyChoose = [
 export default function Services() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Elevator Services - AMC, Maintenance, Repair & Modernization"
+        description="Complete elevator services including AMC, preventive maintenance, repair, modernization, and customization. 24/7 emergency support with expert technicians."
+        keywords="elevator AMC, lift maintenance, elevator repair, lift modernization, elevator service India, lift customization"
+        canonicalUrl="/services"
+      />
       <Header />
       <main>
         {/* Hero Section */}

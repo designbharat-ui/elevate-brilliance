@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Award, Users, Target, Building, Calendar, CheckCircle } from "lucide-react";
 import elevator1 from "@/assets/elevator-1.jpeg";
 import elevator2 from "@/assets/elevator-2.jpeg";
@@ -31,6 +32,12 @@ const values = [
 export default function About() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="About Us - 21+ Years of Elevator Excellence"
+        description="Learn about Rising Star Elevator, a team of qualified professionals with 21+ years experience in vertical transportation. 3000+ installations, 30+ expert mechanics."
+        keywords="about rising star elevator, elevator company history, lift manufacturer India, elevator experts Delhi"
+        canonicalUrl="/about"
+      />
       <Header />
       <main>
         {/* Hero Section */}
