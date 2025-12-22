@@ -21,6 +21,7 @@ import Projects from "./pages/Projects";
 import Sitemap from "./pages/Sitemap";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import GetQuote from "./pages/GetQuote";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/get-quote" element={<GetQuote />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
