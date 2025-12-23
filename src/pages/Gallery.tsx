@@ -8,6 +8,9 @@ import elevator4 from "@/assets/elevator-4.jpeg";
 import elevator5 from "@/assets/elevator-5.jpeg";
 import heroGallery from "@/assets/hero-gallery.jpg";
 import { Play } from "lucide-react";
+import { useState } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const images = [elevator1, elevator2, elevator3, elevator4, elevator5, elevator1, elevator2, elevator3];
 
@@ -23,6 +26,14 @@ const videos = [
 ];
 
 export default function Gallery() {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ImageGallery",
@@ -69,11 +80,22 @@ export default function Gallery() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {images.map((img, i) => (
-                <div key={i} className="aspect-square rounded-lg overflow-hidden group cursor-pointer shadow-lg">
+                <div 
+                  key={i} 
+                  className="aspect-square rounded-lg overflow-hidden group cursor-pointer shadow-lg"
+                  onClick={() => openLightbox(i)}
+                >
                   <img src={img} alt={`Elevator Project ${i + 1}`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 </div>
               ))}
             </div>
+
+            <Lightbox
+              open={lightboxOpen}
+              close={() => setLightboxOpen(false)}
+              index={lightboxIndex}
+              slides={images.map((img) => ({ src: img }))}
+            />
           </div>
         </section>
 

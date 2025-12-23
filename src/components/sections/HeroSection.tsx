@@ -46,13 +46,17 @@ export function HeroSection() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
-            <Button className="btn-gold text-lg py-6 px-10">
-              Get Free Quote
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button className="btn-outline-gold text-lg py-6 px-10">
-              View Our Projects
-            </Button>
+            <a href="/get-quote">
+              <Button className="btn-gold text-lg py-6 px-10">
+                Get Free Quote
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </a>
+            <a href="/gallery">
+              <Button className="btn-outline-gold text-lg py-6 px-10">
+                View Our Projects
+              </Button>
+            </a>
           </div>
 
           {/* Trust Badges */}
