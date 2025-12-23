@@ -295,7 +295,7 @@ export default function GetQuote() {
                       <MapPin className="w-5 h-5 text-gold mt-1" />
                       <div>
                         <p className="font-medium text-foreground">Address</p>
-                        <p className="text-muted-foreground">Delhi NCR, India</p>
+                        <p className="text-muted-foreground">722A, Jaina Tower 2, District Centre Janakpuri, Delhi, India</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">

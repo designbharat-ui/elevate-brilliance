@@ -60,8 +60,8 @@ export default function Contact() {
               <div className="space-y-6">
                 <h2 className="font-display text-2xl font-bold text-foreground mb-6">Contact Info</h2>
                 {[
-                  { icon: MapPin, title: "Address", content: "Delhi NCR, India" },
-                  { icon: Phone, title: "Phone", content: "+91 99999 99999" },
+                  { icon: MapPin, title: "Address", content: "722A, Jaina Tower 2, District Centre Janakpuri, Delhi, India" },
+                  { icon: Phone, title: "Phone", content: "+91 8800732223" },
                   { icon: Mail, title: "Email", content: "info@risingstarelevator.com" },
                   { icon: Clock, title: "Working Hours", content: "Mon-Sat: 9AM - 6PM" },
                 ].map((item) => (

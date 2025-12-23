@@ -16,8 +16,8 @@ const Index = () => {
     "url": "https://risingstarelevator.com",
     "logo": "https://risingstarelevator.com/logo.png",
     "description": "Premium elevator and escalator solutions in India with 21+ years experience",
-    "address": { "@type": "PostalAddress", "addressLocality": "Delhi NCR", "addressCountry": "IN" },
-    "contactPoint": { "@type": "ContactPoint", "telephone": "+91-99999-99999", "contactType": "sales" }
+    "address": { "@type": "PostalAddress", "streetAddress": "722A, Jaina Tower 2, District Centre Janakpuri", "addressLocality": "Delhi", "addressCountry": "IN" },
+    "contactPoint": { "@type": "ContactPoint", "telephone": "+91-8800732223", "contactType": "sales" }
   };
 
   return (

@@ -11,7 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-
+import logoImage from "@/assets/logo.png";
 const products = [
   { name: "Home Lift", href: "/products/home-lift", description: "Elegant residential elevators" },
   { name: "Passenger Lift", href: "/products/passenger-lift", description: "Commercial & residential" },
@@ -49,9 +49,9 @@ export function Header() {
       <div className="hidden lg:block bg-primary text-primary-foreground py-2">
         <div className="container flex justify-between items-center text-sm">
           <div className="flex items-center gap-6">
-            <a href="tel:+919999999999" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <a href="tel:+918800732223" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Phone className="h-4 w-4" />
-              <span>+91 99999 99999</span>
+              <span>+91 8800732223</span>
             </a>
             <a href="mailto:info@risingstar.com" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Mail className="h-4 w-4" />
@@ -76,17 +76,7 @@ export function Header() {
         <div className="container flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-sm flex items-center justify-center shadow-gold group-hover:scale-105 transition-transform">
-              <span className="font-display text-primary font-bold text-xl">RS</span>
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="font-display text-lg font-bold text-foreground leading-tight">
-                Rising Star
-              </h1>
-              <p className="text-xs text-muted-foreground tracking-widest uppercase">
-                Elevator
-              </p>
-            </div>
+            <img src={logoImage} alt="Rising Star Elevator" className="h-14 w-auto group-hover:scale-105 transition-transform" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -181,14 +171,24 @@ export function Header() {
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/get-quote">
+                  <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:text-gold focus:text-gold focus:outline-none">
+                    Get Quote
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button className="btn-gold">
-              Get Quote
-            </Button>
+            <Link to="/get-quote">
+              <Button className="btn-gold">
+                Get Quote
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -272,10 +272,17 @@ export function Header() {
                     Contact
                   </Link>
                 </li>
-                <li className="pt-4">
-                  <Button className="btn-gold w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                <li>
+                  <Link to="/get-quote" className="block py-2 text-foreground hover:text-gold font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                     Get Quote
-                  </Button>
+                  </Link>
+                </li>
+                <li className="pt-4">
+                  <Link to="/get-quote" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button className="btn-gold w-full">
+                      Request Quote
+                    </Button>
+                  </Link>
                 </li>
               </ul>
             </nav>

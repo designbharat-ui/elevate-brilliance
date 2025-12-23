@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Youtube, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logoImage from "@/assets/logo.png";
 
 const quickLinks = [
   { name: "About Us", href: "/about" },
@@ -44,13 +45,17 @@ export function Footer() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="btn-gold">
-                Get Free Quote
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button className="btn-outline-gold">
-                Call Now
-              </Button>
+              <Link to="/get-quote">
+                <Button className="btn-gold">
+                  Get Free Quote
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <a href="tel:+918800732223">
+                <Button className="btn-outline-gold">
+                  Call Now
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -62,13 +67,7 @@ export function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-sm flex items-center justify-center">
-                <span className="font-display text-primary font-bold text-xl">RS</span>
-              </div>
-              <div>
-                <h4 className="font-display text-lg font-bold leading-tight">Rising Star</h4>
-                <p className="text-xs text-primary-foreground/60 tracking-widest uppercase">Elevator Pvt. Ltd.</p>
-              </div>
+              <img src={logoImage} alt="Rising Star Elevator" className="h-16 w-auto bg-white rounded-lg p-1" />
             </Link>
             <p className="text-primary-foreground/70 mb-6 max-w-sm">
               A solution provider committed to safe and feel-good transfer of people & material, 
@@ -125,13 +124,13 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
                 <span className="text-primary-foreground/70 text-sm">
-                  Delhi NCR, India
+                  722A, Jaina Tower 2, District Centre Janakpuri, Delhi, India
                 </span>
               </li>
               <li>
-                <a href="tel:+919999999999" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors">
+                <a href="tel:+918800732223" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors">
                   <Phone className="h-5 w-5 text-gold flex-shrink-0" />
-                  <span className="text-sm">+91 99999 99999</span>
+                  <span className="text-sm">+91 8800732223</span>
                 </a>
               </li>
               <li>
