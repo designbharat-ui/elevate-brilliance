@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
-import { Award, Users, Target, Building, Calendar, CheckCircle } from "lucide-react";
+import { Award, Users, Target, Building, CheckCircle, Eye, Heart, Settings, ClipboardList } from "lucide-react";
 import elevator1 from "@/assets/elevator-1.jpeg";
 import elevator2 from "@/assets/elevator-2.jpeg";
 
@@ -22,11 +22,10 @@ const team = [
   { role: "Engineers", count: 5, description: "Technical design and support team" },
 ];
 
-const values = [
-  { icon: Award, title: "Excellence", description: "Committed to delivering the highest quality in every project" },
-  { icon: Users, title: "Customer Focus", description: "Your satisfaction is our primary business objective" },
-  { icon: Target, title: "Safety First", description: "Zero tolerance approach to safety procedures" },
-  { icon: CheckCircle, title: "Integrity", description: "Honest, ethical, and transparent dealings" },
+const businessAreas = [
+  { icon: Building, title: "New Equipment Business", description: "Vertical Transportation — complete range of traction elevators & escalators with IS compliance and spares availability." },
+  { icon: ClipboardList, title: "Consultancy Services", description: "Optimization evaluation, specification preparation, enquiry calling, technical comparatives, and design approval support." },
+  { icon: Settings, title: "Project Management", description: "Completion schedules, agency coordination, site meetings, performance evaluation, and invoice clearance." },
 ];
 
 export default function About() {
@@ -55,41 +54,39 @@ export default function About() {
                 <span className="text-gradient-gold">Excellence</span> in Vertical Transportation
               </h1>
               <p className="text-primary-foreground/80 text-lg">
-                Rising Star Elevator Pvt. Ltd. is a growing organization managed by a team of 
+                Rising Star Elevator Pvt. Ltd. — a growing organization managed by a team of 
                 highly qualified technocrats with vast experience in vertical transportation and passenger flow.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Company Introduction */}
+        {/* The Company */}
         <section className="section-padding bg-background">
           <div className="container">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
-                  Our Story
+                  The Company
                 </span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Founded by Visionaries in{" "}
-                  <span className="text-gradient-gold">People Movement</span>
+                  Building Trust Through{" "}
+                  <span className="text-gradient-gold">Quality & Service</span>
                 </h2>
-                <div className="space-y-4 text-muted-foreground">
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    RSEPL is founded by duo highly qualified professionals, having vast experience 
-                    in the field of people movement. They have non-conservative, innovative, 
-                    work-as-team style of management and are very sensitive about the product 
-                    offering and above all the post-order service expectations of the customers.
+                    We are pleased to introduce Rising Star Elevator Pvt. Limited (RSEPL) as a growing 
+                    organization in the field of Technical Services and Passenger Free Flow. The organization 
+                    is managed by a team of highly qualified technocrats having vast experience, supported by 
+                    an experienced team of engineers and technicians well trained in the field of installation 
+                    and after sales services.
                   </p>
                   <p>
-                    They follow zero tolerance approach to failure on the commitments made to 
-                    the customers on account of service commitments and safety procedures to be 
-                    followed during installation.
-                  </p>
-                  <p>
-                    The organization is supported by an experienced team of engineers and technicians, 
-                    well trained in the field of installation and after sales services. The complete 
-                    team of RSEPL is committed to provide complete customer satisfaction.
+                    The complete team of RSEPL is committed to provide complete customer satisfaction. We are 
+                    here to build & develop long term business associations with all our customers. Since we 
+                    are a developing organization and value the customer services & satisfaction most, you would 
+                    observe that we are competitively priced — indicative of the fact that we do not operate on 
+                    hefty margins but offer Quality Equipment And Services at affordable prices.
                   </p>
                 </div>
                 <div className="divider-gold mt-8" />
@@ -100,6 +97,125 @@ export default function About() {
                 </div>
                 <div className="absolute -bottom-6 -left-6 w-48 h-48 rounded-lg overflow-hidden shadow-xl border-4 border-background">
                   <img src={elevator2} alt="Premium elevator design" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Business Areas */}
+        <section className="section-padding bg-secondary">
+          <div className="container">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
+                Our Expertise
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Three Pillars of{" "}
+                <span className="text-gradient-gold">Our Business</span>
+              </h2>
+              <p className="text-muted-foreground">Covering three important areas of construction</p>
+              <div className="divider-gold mx-auto mt-4" />
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {businessAreas.map((area) => (
+                <div key={area.title} className="bg-card border border-border rounded-lg p-8 hover:shadow-lg hover:border-gold/30 transition-all group">
+                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-gold/20 transition-colors">
+                    <area.icon className="w-7 h-7 text-gold" />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-foreground mb-3">{area.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{area.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Vision, Values & Mission */}
+        <section className="section-padding bg-background">
+          <div className="container">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
+                Our Guiding Principles
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Vision, Values &{" "}
+                <span className="text-gradient-gold">Mission</span>
+              </h2>
+              <div className="divider-gold mx-auto" />
+            </div>
+
+            <div className="space-y-12">
+              {/* Vision */}
+              <div className="grid lg:grid-cols-5 gap-8 items-start">
+                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
+                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Eye className="w-7 h-7 text-gold" />
+                  </div>
+                  <h3 className="font-display text-2xl font-bold text-foreground">Our Vision</h3>
+                </div>
+                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    To change the expectation of the customers by raising their expectations to the next level 
+                    of demand in terms of product, offerings and services. To offer the product and services 
+                    that has trouble free performance, the features that fulfill expectations of the customers 
+                    in that segment and unique aesthetics that boost about the culture in which we prevail and 
+                    ensure complete customer satisfaction.
+                  </p>
+                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg">
+                    <p className="text-gold font-display font-semibold italic">"Raising expectations to the next level"</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Values */}
+              <div className="grid lg:grid-cols-5 gap-8 items-start">
+                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
+                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-7 h-7 text-gold" />
+                  </div>
+                  <h3 className="font-display text-2xl font-bold text-foreground">Our Values</h3>
+                </div>
+                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
+                  <ul className="space-y-4 text-muted-foreground leading-relaxed">
+                    <li className="flex gap-3">
+                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
+                      <span>Most respectable, honest, ethical and transparent pattern of dealing with all the customers and vendors associated with RSEPL.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
+                      <span>Clear understanding and dedication to our social responsibility and continuous working towards strengthening social status of our country.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
+                      <span>To take environment into account in all our actions in terms of product offering, providing services, maintaining all our offices.</span>
+                    </li>
+                  </ul>
+                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg mt-4">
+                    <p className="text-gold font-display font-semibold italic">"Respect, Honesty, Ethics, Transparency"</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mission */}
+              <div className="grid lg:grid-cols-5 gap-8 items-start">
+                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
+                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Target className="w-7 h-7 text-gold" />
+                  </div>
+                  <h3 className="font-display text-2xl font-bold text-foreground">Our Mission</h3>
+                </div>
+                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    To offer high quality product with touch & feel technology and to become feel good service 
+                    provider till infinity. While we will be supplying the equipment that will have specifications 
+                    better than what will be offered by our competitors in that segment, the quality execution will 
+                    ensure high equipment performance. We have pre-defined process for installation and providing 
+                    services to the customer once the equipment is taken over by the customer.
+                  </p>
+                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg">
+                    <p className="text-gold font-display font-semibold italic">"Feel good service provider till infinity"</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -121,9 +237,7 @@ export default function About() {
             </div>
 
             <div className="relative">
-              {/* Timeline Line */}
               <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2 hidden md:block" />
-              
               <div className="space-y-8 md:space-y-0">
                 {timeline.map((item, index) => (
                   <div key={item.year} className={`relative md:flex ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center md:mb-8`}>
@@ -163,34 +277,6 @@ export default function About() {
                   <div className="stat-number mb-2">{member.count}+</div>
                   <h3 className="font-display text-xl font-semibold text-primary-foreground mb-2">{member.role}</h3>
                   <p className="text-primary-foreground/70 text-sm">{member.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Values */}
-        <section className="section-padding bg-background">
-          <div className="container">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
-                Our Values
-              </span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                What Drives{" "}
-                <span className="text-gradient-gold">Us</span>
-              </h2>
-              <div className="divider-gold mx-auto" />
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {values.map((value) => (
-                <div key={value.title} className="text-center group">
-                  <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-gold/20 transition-colors">
-                    <value.icon className="w-8 h-8 text-gold" />
-                  </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-2">{value.title}</h3>
-                  <p className="text-muted-foreground">{value.description}</p>
                 </div>
               ))}
             </div>
