@@ -320,7 +320,7 @@ export default function ServiceDetail() {
                   Get Free Quote
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-                <a href="tel:+919999999999" className="btn-outline-gold inline-flex items-center justify-center">
+                <a href="tel:+918800732223" className="btn-outline-gold inline-flex items-center justify-center">
                   <Phone className="mr-2 h-4 w-4" />
                   Call Now
                 </a>

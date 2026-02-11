@@ -209,7 +209,7 @@ export default function ProductFeatures() {
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
               Contact our experts for detailed technical documentation and safety certifications.
             </p>
-            <a href="tel:+919999999999" className="btn-gold inline-flex items-center">
+            <a href="tel:+918800732223" className="btn-gold inline-flex items-center">
               <Phone className="mr-2 h-4 w-4" />
               Talk to Expert
             </a>

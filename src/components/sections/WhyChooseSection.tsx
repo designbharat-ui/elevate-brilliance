@@ -40,7 +40,7 @@ export function WhyChooseSection() {
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" 
              style={{
-               backgroundImage: `radial-gradient(circle at 2px 2px, hsl(43 72% 52%) 1px, transparent 0)`,
+               backgroundImage: `radial-gradient(circle at 2px 2px, hsl(200 70% 40%) 1px, transparent 0)`,
                backgroundSize: '40px 40px',
              }} 
         />
@@ -96,8 +96,8 @@ export function WhyChooseSection() {
             <a href="/contact" className="btn-gold inline-flex items-center justify-center">
               Schedule Consultation
             </a>
-            <a href="tel:+919999999999" className="btn-outline-gold inline-flex items-center justify-center">
-              Call Now: +91 99999 99999
+            <a href="tel:+918800732223" className="btn-outline-gold inline-flex items-center justify-center">
+              Call Now: +91 8800732223
             </a>
           </div>
         </div>

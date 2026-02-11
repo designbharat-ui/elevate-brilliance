@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
-import { Award, Users, Target, Building, CheckCircle, Eye, Heart, Settings, ClipboardList } from "lucide-react";
+import { Award, Users, Target, Building, CheckCircle, Settings, ClipboardList } from "lucide-react";
 import elevator1 from "@/assets/elevator-1.jpeg";
 import elevator2 from "@/assets/elevator-2.jpeg";
 
@@ -103,10 +103,76 @@ export default function About() {
           </div>
         </section>
 
-        {/* Business Areas */}
-        <section className="section-padding bg-secondary">
+        {/* Vision, Values & Mission */}
+        <section className="py-16 md:py-20 bg-secondary">
           <div className="container">
-            <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
+                Our Guiding Principles
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Vision, Values &{" "}
+                <span className="text-gradient-gold">Mission</span>
+              </h2>
+              <div className="divider-gold mx-auto" />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Vision Card */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-lg transition-all">
+                <h3 className="font-display text-xl font-bold text-gold mb-4">Our Vision</h3>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  To change the expectation of the customers by raising their expectations to the next level 
+                  of demand in terms of product, offerings and services. To offer trouble-free performance 
+                  and unique aesthetics that ensure complete customer satisfaction.
+                </p>
+                <div className="bg-gold/10 border-l-4 border-gold px-4 py-2 rounded-r-lg">
+                  <p className="text-gold font-display text-sm font-semibold italic">"Raising expectations to the next level"</p>
+                </div>
+              </div>
+
+              {/* Values Card */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-lg transition-all">
+                <h3 className="font-display text-xl font-bold text-gold mb-4">Our Values</h3>
+                <ul className="space-y-3 text-muted-foreground leading-relaxed mb-4">
+                  <li className="flex gap-2">
+                    <CheckCircle className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
+                    <span className="text-sm">Respectable, honest, ethical and transparent dealings with all customers and vendors.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <CheckCircle className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
+                    <span className="text-sm">Dedication to social responsibility and strengthening social status.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <CheckCircle className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
+                    <span className="text-sm">Environmental consciousness in all our actions.</span>
+                  </li>
+                </ul>
+                <div className="bg-gold/10 border-l-4 border-gold px-4 py-2 rounded-r-lg">
+                  <p className="text-gold font-display text-sm font-semibold italic">"Respect, Honesty, Ethics, Transparency"</p>
+                </div>
+              </div>
+
+              {/* Mission Card */}
+              <div className="bg-card border border-border rounded-lg p-8 hover:shadow-lg transition-all">
+                <h3 className="font-display text-xl font-bold text-gold mb-4">Our Mission</h3>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  To offer high quality product with touch & feel technology and to become feel good service 
+                  provider till infinity. We supply equipment with specifications better than competitors, 
+                  with pre-defined processes for installation and post-handover services.
+                </p>
+                <div className="bg-gold/10 border-l-4 border-gold px-4 py-2 rounded-r-lg">
+                  <p className="text-gold font-display text-sm font-semibold italic">"Feel good service provider till infinity"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Business Areas */}
+        <section className="py-16 md:py-20 bg-background">
+          <div className="container">
+            <div className="text-center max-w-3xl mx-auto mb-12">
               <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
                 Our Expertise
               </span>
@@ -127,97 +193,6 @@ export default function About() {
                   <p className="text-muted-foreground leading-relaxed">{area.description}</p>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Vision, Values & Mission */}
-        <section className="section-padding bg-background">
-          <div className="container">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
-                Our Guiding Principles
-              </span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Vision, Values &{" "}
-                <span className="text-gradient-gold">Mission</span>
-              </h2>
-              <div className="divider-gold mx-auto" />
-            </div>
-
-            <div className="space-y-12">
-              {/* Vision */}
-              <div className="grid lg:grid-cols-5 gap-8 items-start">
-                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
-                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Eye className="w-7 h-7 text-gold" />
-                  </div>
-                  <h3 className="font-display text-2xl font-bold text-foreground">Our Vision</h3>
-                </div>
-                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    To change the expectation of the customers by raising their expectations to the next level 
-                    of demand in terms of product, offerings and services. To offer the product and services 
-                    that has trouble free performance, the features that fulfill expectations of the customers 
-                    in that segment and unique aesthetics that boost about the culture in which we prevail and 
-                    ensure complete customer satisfaction.
-                  </p>
-                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg">
-                    <p className="text-gold font-display font-semibold italic">"Raising expectations to the next level"</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Values */}
-              <div className="grid lg:grid-cols-5 gap-8 items-start">
-                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
-                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-7 h-7 text-gold" />
-                  </div>
-                  <h3 className="font-display text-2xl font-bold text-foreground">Our Values</h3>
-                </div>
-                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
-                  <ul className="space-y-4 text-muted-foreground leading-relaxed">
-                    <li className="flex gap-3">
-                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                      <span>Most respectable, honest, ethical and transparent pattern of dealing with all the customers and vendors associated with RSEPL.</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                      <span>Clear understanding and dedication to our social responsibility and continuous working towards strengthening social status of our country.</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                      <span>To take environment into account in all our actions in terms of product offering, providing services, maintaining all our offices.</span>
-                    </li>
-                  </ul>
-                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg mt-4">
-                    <p className="text-gold font-display font-semibold italic">"Respect, Honesty, Ethics, Transparency"</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mission */}
-              <div className="grid lg:grid-cols-5 gap-8 items-start">
-                <div className="lg:col-span-1 flex lg:flex-col items-center lg:items-start gap-4">
-                  <div className="w-14 h-14 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Target className="w-7 h-7 text-gold" />
-                  </div>
-                  <h3 className="font-display text-2xl font-bold text-foreground">Our Mission</h3>
-                </div>
-                <div className="lg:col-span-4 bg-card border border-border rounded-lg p-8">
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    To offer high quality product with touch & feel technology and to become feel good service 
-                    provider till infinity. While we will be supplying the equipment that will have specifications 
-                    better than what will be offered by our competitors in that segment, the quality execution will 
-                    ensure high equipment performance. We have pre-defined process for installation and providing 
-                    services to the customer once the equipment is taken over by the customer.
-                  </p>
-                  <div className="bg-gold/10 border-l-4 border-gold px-6 py-3 rounded-r-lg">
-                    <p className="text-gold font-display font-semibold italic">"Feel good service provider till infinity"</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
