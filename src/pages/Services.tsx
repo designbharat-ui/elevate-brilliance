@@ -156,8 +156,8 @@ export default function Services() {
                 Schedule Service
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-              <a href="tel:+919999999999" className="btn-outline-gold inline-flex items-center justify-center">
-                Emergency: +91 99999 99999
+              <a href="tel:+918800732223" className="btn-outline-gold inline-flex items-center justify-center">
+                Emergency: +91 8800732223
               </a>
             </div>
           </div>
