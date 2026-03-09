@@ -10,7 +10,9 @@ import { WhyChooseSection } from "@/components/sections/WhyChooseSection";
 import { usePageContent } from "@/hooks/usePageContent";
 
 const Index = () => {
-  const { page } = usePageContent("home");
+  const { page, getField, getSectionFields } = usePageContent("home");
+
+  const heroFields = getSectionFields("hero");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -34,7 +36,17 @@ const Index = () => {
       />
       <Header />
       <main>
-        <HeroSection />
+        <HeroSection
+          badgeText={heroFields?.badge_text}
+          title={heroFields?.title}
+          highlightText={heroFields?.highlight_text}
+          subtitle={heroFields?.subtitle}
+          description={heroFields?.description}
+          ctaPrimaryText={heroFields?.cta_primary_text}
+          ctaPrimaryLink={heroFields?.cta_primary_link}
+          ctaSecondaryText={heroFields?.cta_secondary_text}
+          ctaSecondaryLink={heroFields?.cta_secondary_link}
+        />
         <ServicesSection />
         <StatsSection />
         <ProductsSection />

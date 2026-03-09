@@ -3,8 +3,9 @@ import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { MapPin } from "lucide-react";
 import heroProjects from "@/assets/hero-projects.jpg";
+import { usePageContent } from "@/hooks/usePageContent";
 
-const projects = [
+const defaultProjects = [
   { name: "Wave Infratech", location: "Noida", type: "Commercial", specs: "Multiple MRL Elevators", status: "Completed" },
   { name: "Parker Estate Developers", location: "Sonepat", type: "Mixed Use", specs: "1500Kgs MRL-Gearless, 3 stops", status: "Completed" },
   { name: "Gurgaon Residential", location: "Gurgaon", type: "Residential", specs: "408 Kgs, 4 stops", status: "Completed" },
@@ -14,6 +15,15 @@ const projects = [
 ];
 
 export default function Projects() {
+  const { page, getField, getSectionFields } = usePageContent("projects");
+
+  const heroLabel = getField("hero", "label", "Projects");
+  const heroTitle = getField("hero", "title", "Our Activities");
+  const heroDesc = getField("hero", "description", "3000+ successful installations across India.");
+
+  const projectsFields = getSectionFields("projects");
+  const projects = projectsFields?.items || defaultProjects;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -24,8 +34,8 @@ export default function Projects() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Projects - 3000+ Successful Installations"
-        description="View Rising Star Elevator's completed projects including Wave Infratech Noida, Parker Estate Sonepat, and 3000+ successful elevator installations across Delhi NCR."
+        title={page?.meta_title || "Projects - 3000+ Successful Installations"}
+        description={page?.meta_description || "View Rising Star Elevator's completed projects including Wave Infratech Noida, Parker Estate Sonepat, and 3000+ successful elevator installations across Delhi NCR."}
         keywords="elevator projects India, lift installation Delhi, elevator Noida, lift Gurgaon, commercial elevator projects, residential lift installation"
         canonicalUrl="/projects"
         structuredData={structuredData}
@@ -39,11 +49,11 @@ export default function Projects() {
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Projects</span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{heroLabel}</span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-                Our <span className="text-gradient-gold">Activities</span>
+                {heroTitle.includes("Activities") ? <>Our <span className="text-gradient-gold">Activities</span></> : heroTitle}
               </h1>
-              <p className="text-primary-foreground/80 text-lg">3000+ successful installations across India.</p>
+              <p className="text-primary-foreground/80 text-lg">{heroDesc}</p>
             </div>
           </div>
         </section>
@@ -51,7 +61,7 @@ export default function Projects() {
         <section className="section-padding bg-background">
           <div className="container">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
+              {projects.map((project: any) => (
                 <div key={project.name} className="bg-card border border-border rounded-lg p-6 card-hover">
                   <div className="flex items-center gap-2 text-gold text-sm mb-3">
                     <MapPin className="w-4 h-4" />
