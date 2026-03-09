@@ -940,13 +940,25 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
 
   return (
     <div className="live-preview-editor">
-      {/* Info bar */}
-      <div className="bg-gold/10 border-b border-gold/20 px-4 py-2 text-center">
-        <p className="text-xs text-gold font-medium">
-          ✏️ Live Edit Mode — Click any text or hover over images to edit directly
-        </p>
-      </div>
-      {sections.map(renderSection)}
+      {sections.map((section) => (
+        <div
+          key={section.id}
+          onClick={handleSectionClick(section.id)}
+          className={`relative cursor-pointer transition-all ${
+            selectedSectionId === section.id
+              ? "ring-2 ring-gold ring-offset-2"
+              : "hover:ring-1 hover:ring-gold/30"
+          }`}
+        >
+          {/* Section type indicator */}
+          {selectedSectionId === section.id && (
+            <div className="absolute top-2 right-2 z-20 bg-gold text-primary text-xs font-medium px-2 py-1 rounded shadow-lg">
+              ✏️ Editing
+            </div>
+          )}
+          {renderSection(section)}
+        </div>
+      ))}
     </div>
   );
 }
