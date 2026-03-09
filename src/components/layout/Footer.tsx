@@ -1,7 +1,14 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Youtube, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import logoImage from "@/assets/logo.png";
+
+interface MenuItem {
+  name: string;
+  href: string;
+}
 
 const quickLinks = [
   { name: "About Us", href: "/about" },
@@ -13,23 +20,48 @@ const quickLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
-const products = [
-  { name: "Home Lift", href: "/products/home-lift" },
-  { name: "Passenger Lift", href: "/products/passenger-lift" },
-  { name: "Hospital Lift", href: "/products/hospital-lift" },
-  { name: "Capsule Lift", href: "/products/capsule-lift" },
-  { name: "Escalators", href: "/products/escalator" },
-  { name: "Moving Walk", href: "/products/moving-walk" },
-];
-
-const services = [
-  { name: "AMC Services", href: "/services/amc" },
-  { name: "Maintenance", href: "/services/maintenance" },
-  { name: "Repair Services", href: "/services/repair" },
-  { name: "Modernization", href: "/services/modernization" },
-];
-
 export function Footer() {
+  const [products, setProducts] = useState<MenuItem[]>([]);
+  const [services, setServices] = useState<MenuItem[]>([]);
+
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      // Fetch product pages
+      const { data: productPages } = await supabase
+        .from("pages")
+        .select("title, slug")
+        .eq("parent_slug", "products")
+        .eq("status", "published")
+        .eq("is_visible", true)
+        .order("page_order", { ascending: true })
+        .limit(6);
+
+      if (productPages) {
+        setProducts(productPages.map(p => ({
+          name: p.title,
+          href: `/products/${p.slug}`
+        })));
+      }
+
+      // Fetch service pages
+      const { data: servicePages } = await supabase
+        .from("pages")
+        .select("title, slug")
+        .eq("parent_slug", "services")
+        .eq("status", "published")
+        .eq("is_visible", true)
+        .order("page_order", { ascending: true });
+
+      if (servicePages) {
+        setServices(servicePages.map(p => ({
+          name: p.title,
+          href: `/services/${p.slug}`
+        })));
+      }
+    };
+
+    fetchFooterData();
+  }, []);
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* CTA Section */}

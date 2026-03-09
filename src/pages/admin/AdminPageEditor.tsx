@@ -87,6 +87,8 @@ export default function AdminPageEditor() {
   const [sections, setSections] = useState<PageSection[]>([]);
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [parentSlug, setParentSlug] = useState<string>("");
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (!isNew && id) loadPage(id);
@@ -103,6 +105,8 @@ export default function AdminPageEditor() {
     setMetaTitle(data.meta_title || "");
     setMetaDescription(data.meta_description || "");
     setOgImage(data.og_image || "");
+    setParentSlug(data.parent_slug || "");
+    setIsVisible(data.is_visible !== false);
 
     const isSys = SYSTEM_PAGES.includes(data.slug);
     setIsSystemPage(isSys);
@@ -205,6 +209,8 @@ export default function AdminPageEditor() {
       meta_title: metaTitle || null,
       meta_description: metaDescription || null,
       og_image: ogImage || null,
+      parent_slug: parentSlug || null,
+      is_visible: isVisible,
       ...(isNew && { created_by: user?.id }),
     };
 
@@ -780,10 +786,35 @@ export default function AdminPageEditor() {
                   <Label className="text-xs font-semibold">Page Title</Label>
                   <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title..." />
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs font-semibold">Parent Category</Label>
+                    <select 
+                      className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                      value={parentSlug}
+                      onChange={(e) => setParentSlug(e.target.value)}
+                    >
+                      <option value="">None (Top Level)</option>
+                      <option value="products">Products</option>
+                      <option value="services">Services</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label className="text-xs font-semibold">Visibility</Label>
+                    <select 
+                      className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                      value={isVisible ? "visible" : "hidden"}
+                      onChange={(e) => setIsVisible(e.target.value === "visible")}
+                    >
+                      <option value="visible">Visible in Menus</option>
+                      <option value="hidden">Hidden</option>
+                    </select>
+                  </div>
+                </div>
                 <div>
                   <Label className="text-xs font-semibold">URL Slug</Label>
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground text-sm">/</span>
+                    <span className="text-muted-foreground text-sm">{parentSlug ? `/${parentSlug}/` : '/'}</span>
                     <Input value={slug} onChange={(e) => setSlug(e.target.value)} disabled={isSystemPage} />
                   </div>
                   {isSystemPage && <p className="text-xs text-muted-foreground mt-1">System page slug cannot be changed.</p>}

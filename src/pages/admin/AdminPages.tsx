@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Eye, Search, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -32,6 +33,13 @@ const SLUG_TO_ROUTE: Record<string, string> = {
   "sitemap": "/sitemap",
 };
 
+const getRouteForPage = (slug: string, parentSlug?: string | null): string => {
+  if (SLUG_TO_ROUTE[slug]) return SLUG_TO_ROUTE[slug];
+  if (parentSlug === "products") return `/products/${slug}`;
+  if (parentSlug === "services") return `/services/${slug}`;
+  return `/page/${slug}`;
+};
+
 interface Page {
   id: string;
   title: string;
@@ -39,6 +47,8 @@ interface Page {
   status: string;
   updated_at: string;
   meta_title: string | null;
+  parent_slug: string | null;
+  is_visible: boolean;
 }
 
 export default function AdminPages() {
@@ -50,7 +60,7 @@ export default function AdminPages() {
   const fetchPages = async () => {
     const { data } = await supabase
       .from("pages")
-      .select("id, title, slug, status, updated_at, meta_title")
+      .select("id, title, slug, status, updated_at, meta_title, parent_slug, is_visible")
       .order("page_order", { ascending: true });
     setPages(data || []);
     setLoading(false);
@@ -79,12 +89,78 @@ export default function AdminPages() {
     fetchPages();
   };
 
-  const getViewUrl = (slug: string) => SLUG_TO_ROUTE[slug] || `/page/${slug}`;
+  const toggleVisibility = async (id: string, currentVisibility: boolean) => {
+    await supabase.from("pages").update({ is_visible: !currentVisibility }).eq("id", id);
+    toast.success(currentVisibility ? "Page hidden" : "Page visible");
+    fetchPages();
+  };
 
   const filtered = pages.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.slug.toLowerCase().includes(search.toLowerCase())
   );
+
+  const renderPageCard = (page: Page) => {
+    const isSystem = SYSTEM_PAGES.includes(page.slug);
+    const pageUrl = getRouteForPage(page.slug, page.parent_slug);
+    return (
+      <Card key={page.id} className={`p-4 flex items-center justify-between hover:shadow-md transition-shadow ${!page.is_visible ? 'opacity-60' : ''}`}>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold text-foreground truncate">{page.title}</h3>
+            <Badge variant={page.status === "published" ? "default" : "secondary"}>
+              {page.status}
+            </Badge>
+            {!page.is_visible && <Badge variant="outline" className="text-xs">Hidden</Badge>}
+            {isSystem && <Badge variant="outline" className="text-xs">System</Badge>}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {pageUrl} • Updated {new Date(page.updated_at).toLocaleDateString()}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 ml-4">
+          <Button
+            variant="ghost" size="sm"
+            onClick={() => toggleVisibility(page.id, page.is_visible)}
+            title={page.is_visible ? "Hide page" : "Show page"}
+          >
+            <Eye className={`h-4 w-4 ${!page.is_visible ? 'opacity-40' : ''}`} />
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
+            <a href={pageUrl} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/admin/pages/${page.id}`)}>
+            <Edit className="h-4 w-4" />
+          </Button>
+          {!isSystem && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete "{page.title}"?</AlertDialogTitle>
+                  <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => deletePage(page.id, page.slug)} className="bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
+      </Card>
+    );
+  };
+
+  const mainPages = filtered.filter(p => !p.parent_slug);
+  const productPages = filtered.filter(p => p.parent_slug === "products");
+  const servicePages = filtered.filter(p => p.parent_slug === "services");
 
   return (
     <AdminLayout>
@@ -92,7 +168,11 @@ export default function AdminPages() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground">Pages</h1>
-            <p className="text-sm text-muted-foreground mt-1">{pages.length} pages total • {pages.filter(p => SYSTEM_PAGES.includes(p.slug)).length} system pages</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {pages.length} total • {pages.filter(p => !p.parent_slug).length} main •{" "}
+              {pages.filter(p => p.parent_slug === "products").length} products •{" "}
+              {pages.filter(p => p.parent_slug === "services").length} services
+            </p>
           </div>
           <Button onClick={() => navigate("/admin/pages/new")} className="btn-gold">
             <Plus className="h-4 w-4 mr-2" /> New Page
@@ -106,69 +186,46 @@ export default function AdminPages() {
 
         {loading ? (
           <p className="text-muted-foreground">Loading...</p>
-        ) : filtered.length === 0 ? (
-          <Card className="p-12 text-center">
-            <p className="text-muted-foreground mb-4">No pages found</p>
-            <Button onClick={() => navigate("/admin/pages/new")} className="btn-gold">
-              <Plus className="h-4 w-4 mr-2" /> Create First Page
-            </Button>
-          </Card>
         ) : (
-          <div className="space-y-2">
-            {filtered.map((page) => {
-              const isSystem = SYSTEM_PAGES.includes(page.slug);
-              return (
-                <Card key={page.id} className="p-4 flex items-center justify-between hover:shadow-md transition-shadow">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-foreground truncate">{page.title}</h3>
-                      <Badge variant={page.status === "published" ? "default" : "secondary"}>
-                        {page.status}
-                      </Badge>
-                      {isSystem && (
-                        <Badge variant="outline" className="text-xs">System</Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {getViewUrl(page.slug)} • Updated {new Date(page.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    <Button variant="ghost" size="sm" asChild>
-                      <a href={getViewUrl(page.slug)} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => toggleStatus(page.id, page.status)}>
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => navigate(`/admin/pages/${page.id}`)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {!isSystem && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete "{page.title}"?</AlertDialogTitle>
-                            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deletePage(page.id, page.slug)} className="bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </div>
+          <Tabs defaultValue="all">
+            <TabsList>
+              <TabsTrigger value="all">All Pages ({filtered.length})</TabsTrigger>
+              <TabsTrigger value="main">Main ({mainPages.length})</TabsTrigger>
+              <TabsTrigger value="products">Products ({productPages.length})</TabsTrigger>
+              <TabsTrigger value="services">Services ({servicePages.length})</TabsTrigger>
+            </TabsList>
+            <TabsContent value="all" className="mt-4">
+              {filtered.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <p className="text-muted-foreground mb-4">No pages found</p>
+                  <Button onClick={() => navigate("/admin/pages/new")} className="btn-gold">
+                    <Plus className="h-4 w-4 mr-2" /> Create First Page
+                  </Button>
                 </Card>
-              );
-            })}
-          </div>
+              ) : (
+                <div className="space-y-2">{filtered.map(renderPageCard)}</div>
+              )}
+            </TabsContent>
+            <TabsContent value="main" className="mt-4">
+              <div className="space-y-2">{mainPages.map(renderPageCard)}</div>
+            </TabsContent>
+            <TabsContent value="products" className="mt-4">
+              <div className="space-y-2 mb-3">
+                {productPages.map(renderPageCard)}
+              </div>
+              <Button variant="outline" size="sm" onClick={() => navigate("/admin/pages/new")}>
+                <Plus className="h-4 w-4 mr-1" /> Add Product Page
+              </Button>
+            </TabsContent>
+            <TabsContent value="services" className="mt-4">
+              <div className="space-y-2 mb-3">
+                {servicePages.map(renderPageCard)}
+              </div>
+              <Button variant="outline" size="sm" onClick={() => navigate("/admin/pages/new")}>
+                <Plus className="h-4 w-4 mr-1" /> Add Service Page
+              </Button>
+            </TabsContent>
+          </Tabs>
         )}
       </div>
     </AdminLayout>

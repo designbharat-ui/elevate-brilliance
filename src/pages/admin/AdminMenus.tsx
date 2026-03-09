@@ -26,16 +26,24 @@ export default function AdminMenus() {
   const [headerMenu, setHeaderMenu] = useState<MenuData>({ name: "header", items: [] });
   const [footerMenu, setFooterMenu] = useState<MenuData>({ name: "footer", items: [] });
   const [saving, setSaving] = useState(false);
+  const [productPages, setProductPages] = useState<{title: string; slug: string}[]>([]);
+  const [servicePages, setServicePages] = useState<{title: string; slug: string}[]>([]);
 
   useEffect(() => {
     const fetchMenus = async () => {
-      const { data } = await supabase.from("menus").select("*");
-      if (data) {
-        const header = data.find((m) => m.name === "header");
-        const footer = data.find((m) => m.name === "footer");
+      const [{ data: menuData }, { data: prodData }, { data: svcData }] = await Promise.all([
+        supabase.from("menus").select("*"),
+        supabase.from("pages").select("title, slug").eq("parent_slug", "products").eq("status", "published").order("page_order"),
+        supabase.from("pages").select("title, slug").eq("parent_slug", "services").eq("status", "published").order("page_order"),
+      ]);
+      if (menuData) {
+        const header = menuData.find((m) => m.name === "header");
+        const footer = menuData.find((m) => m.name === "footer");
         if (header) setHeaderMenu({ id: header.id, name: "header", items: (header.items as unknown as MenuItem[]) || [] });
         if (footer) setFooterMenu({ id: footer.id, name: "footer", items: (footer.items as unknown as MenuItem[]) || [] });
       }
+      if (prodData) setProductPages(prodData);
+      if (svcData) setServicePages(svcData);
     };
     fetchMenus();
   }, []);
@@ -97,6 +105,39 @@ export default function AdminMenus() {
 
   const renderMenuEditor = (menu: "header" | "footer", data: MenuData) => (
     <Card className="p-4 space-y-4">
+      {/* Quick Add from CMS Pages */}
+      {(productPages.length > 0 || servicePages.length > 0) && (
+        <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Quick Add from CMS Pages</p>
+          <div className="flex flex-wrap gap-2">
+            {productPages.map(p => (
+              <Button key={p.slug} variant="outline" size="sm" className="text-xs h-7"
+                onClick={() => {
+                  const setter = menu === "header" ? setHeaderMenu : setFooterMenu;
+                  setter(prev => ({
+                    ...prev,
+                    items: [...prev.items, { id: crypto.randomUUID(), label: p.title, href: `/products/${p.slug}` }],
+                  }));
+                }}>
+                + {p.title}
+              </Button>
+            ))}
+            {servicePages.map(p => (
+              <Button key={p.slug} variant="outline" size="sm" className="text-xs h-7"
+                onClick={() => {
+                  const setter = menu === "header" ? setHeaderMenu : setFooterMenu;
+                  setter(prev => ({
+                    ...prev,
+                    items: [...prev.items, { id: crypto.randomUUID(), label: p.title, href: `/services/${p.slug}` }],
+                  }));
+                }}>
+                + {p.title}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {data.items.map((item, idx) => (
           <div key={item.id} className="flex items-center gap-2 bg-background border border-border rounded p-2">
