@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Pencil, ImageIcon, X, Check } from "lucide-react";
+import { Upload, Pencil, ImageIcon, X, Check, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -94,28 +94,39 @@ function EditableImage({
   className = "",
   onUpload,
   overlayText = "Change Image",
+  showAddButton = false,
 }: {
   src: string;
   alt?: string;
   className?: string;
   onUpload: (file: File) => void;
   overlayText?: string;
+  showAddButton?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className={`relative group/img cursor-pointer ${className}`} onClick={() => inputRef.current?.click()}>
+    <div 
+      data-editable="true"
+      className={`relative group/img cursor-pointer ${className}`} 
+      onClick={() => inputRef.current?.click()}
+    >
       {src ? (
         <img src={src} alt={alt} className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full bg-muted flex items-center justify-center">
-          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+        <div className="w-full h-full bg-muted/50 flex items-center justify-center min-h-[100px]">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <ImageIcon className="h-8 w-8" />
+            {showAddButton && <span className="text-sm">Click to add image</span>}
+          </div>
         </div>
       )}
-      <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/50 transition-all flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/60 transition-all flex items-center justify-center">
         <div className="opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center gap-2 text-white">
-          <Upload className="h-6 w-6" />
-          <span className="text-sm font-medium">{overlayText}</span>
+          <div className="bg-gold rounded-full p-3 shadow-lg">
+            <Upload className="h-6 w-6" />
+          </div>
+          <span className="text-sm font-medium bg-black/50 px-3 py-1 rounded-full">{overlayText}</span>
         </div>
       </div>
       <input
@@ -128,6 +139,59 @@ function EditableImage({
           e.target.value = "";
         }}
       />
+    </div>
+  );
+}
+
+// Background Image Editor Component
+function EditableBackgroundImage({
+  src,
+  onUpload,
+  children,
+  overlayOpacity = 0.85,
+}: {
+  src?: string;
+  onUpload: (file: File) => void;
+  children: React.ReactNode;
+  overlayOpacity?: number;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="relative">
+      {/* Background Image Layer */}
+      {src && (
+        <div className="absolute inset-0">
+          <img src={src} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-primary" style={{ opacity: overlayOpacity }} />
+        </div>
+      )}
+      
+      {/* Edit Background Button - Always visible */}
+      <button
+        data-editable="true"
+        onClick={() => inputRef.current?.click()}
+        className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/70 hover:bg-gold text-white px-3 py-2 rounded-lg text-sm font-medium transition-all shadow-lg group"
+      >
+        <ImageIcon className="h-4 w-4" />
+        <span>{src ? "Change Background" : "Add Background Image"}</span>
+      </button>
+      
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.[0]) onUpload(e.target.files[0]);
+          e.target.value = "";
+        }}
+      />
+      
+      {/* Content Layer */}
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   );
 }
@@ -180,88 +244,84 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
     switch (section.type) {
       case "hero":
         return (
-          <section key={sid} className="relative py-24 bg-gradient-hero overflow-hidden">
-            {f.bg_image && (
-              <div className="absolute inset-0">
-                <EditableImage
-                  src={f.bg_image}
-                  className="w-full h-full"
-                  onUpload={handleImageChange(sid, "bg_image")}
-                  overlayText="Change Hero Background"
-                />
-                <div className="absolute inset-0 bg-primary/85" />
-              </div>
-            )}
-            {!f.bg_image && (
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
-              </div>
-            )}
-            <div className="container relative z-10">
-              <div className="max-w-3xl">
-                {f.label !== undefined && (
-                  <EditableText
-                    value={f.label}
-                    onChange={(v) => onUpdateField(sid, "label", v)}
-                    className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4"
-                    tag="span"
-                  />
-                )}
-                <div className="mb-6">
-                  <EditableText
-                    value={f.title || ""}
-                    onChange={(v) => onUpdateField(sid, "title", v)}
-                    className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground block"
-                    tag="h1"
-                  />
-                  {f.highlight_text !== undefined && (
-                    <EditableText
-                      value={f.highlight_text}
-                      onChange={(v) => onUpdateField(sid, "highlight_text", v)}
-                      className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gold block mt-1"
-                      tag="span"
-                    />
-                  )}
+          <EditableBackgroundImage
+            key={sid}
+            src={f.bg_image}
+            onUpload={handleImageChange(sid, "bg_image")}
+            overlayOpacity={0.85}
+          >
+            <section className="py-24 bg-gradient-hero overflow-hidden">
+              {!f.bg_image && (
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
                 </div>
-                {f.subtitle !== undefined && (
-                  <EditableText
-                    value={f.subtitle}
-                    onChange={(v) => onUpdateField(sid, "subtitle", v)}
-                    className="text-primary-foreground text-xl font-semibold mb-4 block"
-                    tag="p"
-                  />
-                )}
-                {f.description !== undefined && (
-                  <EditableText
-                    value={f.description}
-                    onChange={(v) => onUpdateField(sid, "description", v)}
-                    className="text-primary-foreground/80 text-lg block"
-                    tag="p"
-                    multiline
-                  />
-                )}
-                {/* CTA buttons display */}
-                <div className="flex gap-4 mt-8">
-                  {f.cta_primary_text && (
+              )}
+              <div className="container relative z-10">
+                <div className="max-w-3xl">
+                  {f.label !== undefined && (
                     <EditableText
-                      value={f.cta_primary_text}
-                      onChange={(v) => onUpdateField(sid, "cta_primary_text", v)}
-                      className="btn-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                      value={f.label}
+                      onChange={(v) => onUpdateField(sid, "label", v)}
+                      className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4"
                       tag="span"
                     />
                   )}
-                  {f.cta_secondary_text && (
+                  <div className="mb-6">
                     <EditableText
-                      value={f.cta_secondary_text}
-                      onChange={(v) => onUpdateField(sid, "cta_secondary_text", v)}
-                      className="btn-outline-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
-                      tag="span"
+                      value={f.title || ""}
+                      onChange={(v) => onUpdateField(sid, "title", v)}
+                      className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground block"
+                      tag="h1"
+                    />
+                    {f.highlight_text !== undefined && (
+                      <EditableText
+                        value={f.highlight_text}
+                        onChange={(v) => onUpdateField(sid, "highlight_text", v)}
+                        className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gold block mt-1"
+                        tag="span"
+                      />
+                    )}
+                  </div>
+                  {f.subtitle !== undefined && (
+                    <EditableText
+                      value={f.subtitle}
+                      onChange={(v) => onUpdateField(sid, "subtitle", v)}
+                      className="text-primary-foreground text-xl font-semibold mb-4 block"
+                      tag="p"
                     />
                   )}
+                  {f.description !== undefined && (
+                    <EditableText
+                      value={f.description}
+                      onChange={(v) => onUpdateField(sid, "description", v)}
+                      className="text-primary-foreground/80 text-lg block"
+                      tag="p"
+                      multiline
+                    />
+                  )}
+                  {/* CTA buttons display */}
+                  <div className="flex gap-4 mt-8">
+                    {f.cta_primary_text && (
+                      <EditableText
+                        value={f.cta_primary_text}
+                        onChange={(v) => onUpdateField(sid, "cta_primary_text", v)}
+                        className="btn-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                        tag="span"
+                      />
+                    )}
+                    {f.cta_secondary_text && (
+                      <EditableText
+                        value={f.cta_secondary_text}
+                        onChange={(v) => onUpdateField(sid, "cta_secondary_text", v)}
+                        className="btn-outline-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                        tag="span"
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </EditableBackgroundImage>
         );
 
       case "stats":
@@ -582,16 +642,15 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
                     </div>
                   )}
                 </div>
-                {f.image !== undefined && (
-                  <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elegant">
-                    <EditableImage
-                      src={f.image}
-                      className="w-full h-full"
-                      onUpload={handleImageChange(sid, "image")}
-                      overlayText="Change Image"
-                    />
-                  </div>
-                )}
+                <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elegant">
+                  <EditableImage
+                    src={f.image || ""}
+                    className="w-full h-full"
+                    onUpload={handleImageChange(sid, "image")}
+                    overlayText={f.image ? "Change Image" : "Add Image"}
+                    showAddButton={!f.image}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -781,7 +840,7 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {f.images?.map((img: string, i: number) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden">
+                  <div key={i} className="aspect-square rounded-lg overflow-hidden relative group">
                     <EditableImage
                       src={typeof img === 'string' ? img : ''}
                       className="w-full h-full"
@@ -791,10 +850,45 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
                           onUpdateField(sid, "images", arr);
                         });
                       }}
-                      overlayText="Replace"
+                      overlayText="Change Image"
                     />
+                    {/* Delete button */}
+                    <button
+                      data-editable="true"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const arr = f.images.filter((_: any, idx: number) => idx !== i);
+                        onUpdateField(sid, "images", arr);
+                      }}
+                      className="absolute top-2 right-2 z-10 bg-destructive text-destructive-foreground p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </div>
                 ))}
+                {/* Add new image tile */}
+                <div className="aspect-square rounded-lg border-2 border-dashed border-gold/50 flex items-center justify-center cursor-pointer hover:border-gold hover:bg-gold/5 transition-all">
+                  <label className="cursor-pointer flex flex-col items-center gap-2 p-4">
+                    <div className="bg-gold/10 rounded-full p-3">
+                      <Plus className="h-6 w-6 text-gold" />
+                    </div>
+                    <span className="text-sm font-medium text-gold">Add Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          onImageUpload(e.target.files[0], (url) => {
+                            const arr = [...(f.images || []), url];
+                            onUpdateField(sid, "images", arr);
+                          });
+                        }
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </section>
