@@ -39,6 +39,7 @@ import AdminMedia from "./pages/admin/AdminMedia";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSEO from "./pages/admin/AdminSEO";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminSetup from "./pages/admin/AdminSetup";
 
 const queryClient = new QueryClient();
 
