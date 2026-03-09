@@ -94,28 +94,39 @@ function EditableImage({
   className = "",
   onUpload,
   overlayText = "Change Image",
+  showAddButton = false,
 }: {
   src: string;
   alt?: string;
   className?: string;
   onUpload: (file: File) => void;
   overlayText?: string;
+  showAddButton?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className={`relative group/img cursor-pointer ${className}`} onClick={() => inputRef.current?.click()}>
+    <div 
+      data-editable="true"
+      className={`relative group/img cursor-pointer ${className}`} 
+      onClick={() => inputRef.current?.click()}
+    >
       {src ? (
         <img src={src} alt={alt} className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full bg-muted flex items-center justify-center">
-          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+        <div className="w-full h-full bg-muted/50 flex items-center justify-center min-h-[100px]">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <ImageIcon className="h-8 w-8" />
+            {showAddButton && <span className="text-sm">Click to add image</span>}
+          </div>
         </div>
       )}
-      <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/50 transition-all flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/60 transition-all flex items-center justify-center">
         <div className="opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center gap-2 text-white">
-          <Upload className="h-6 w-6" />
-          <span className="text-sm font-medium">{overlayText}</span>
+          <div className="bg-gold rounded-full p-3 shadow-lg">
+            <Upload className="h-6 w-6" />
+          </div>
+          <span className="text-sm font-medium bg-black/50 px-3 py-1 rounded-full">{overlayText}</span>
         </div>
       </div>
       <input
@@ -128,6 +139,59 @@ function EditableImage({
           e.target.value = "";
         }}
       />
+    </div>
+  );
+}
+
+// Background Image Editor Component
+function EditableBackgroundImage({
+  src,
+  onUpload,
+  children,
+  overlayOpacity = 0.85,
+}: {
+  src?: string;
+  onUpload: (file: File) => void;
+  children: React.ReactNode;
+  overlayOpacity?: number;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="relative">
+      {/* Background Image Layer */}
+      {src && (
+        <div className="absolute inset-0">
+          <img src={src} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-primary" style={{ opacity: overlayOpacity }} />
+        </div>
+      )}
+      
+      {/* Edit Background Button - Always visible */}
+      <button
+        data-editable="true"
+        onClick={() => inputRef.current?.click()}
+        className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/70 hover:bg-gold text-white px-3 py-2 rounded-lg text-sm font-medium transition-all shadow-lg group"
+      >
+        <ImageIcon className="h-4 w-4" />
+        <span>{src ? "Change Background" : "Add Background Image"}</span>
+      </button>
+      
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.[0]) onUpload(e.target.files[0]);
+          e.target.value = "";
+        }}
+      />
+      
+      {/* Content Layer */}
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   );
 }
