@@ -134,30 +134,45 @@ export default function AdminPages() {
           <div className="space-y-2">
             {filtered.map((page) => {
               const isSystem = SYSTEM_PAGES.includes(page.slug);
+              const pageUrl = getRouteForPage(page.slug, page.parent_slug);
               return (
-                <Card key={page.id} className="p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+                <Card key={page.id} className={`p-4 flex items-center justify-between hover:shadow-md transition-shadow ${!page.is_visible ? 'opacity-60' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold text-foreground truncate">{page.title}</h3>
                       <Badge variant={page.status === "published" ? "default" : "secondary"}>
                         {page.status}
                       </Badge>
+                      {!page.is_visible && (
+                        <Badge variant="outline" className="text-xs">Hidden</Badge>
+                      )}
                       {isSystem && (
                         <Badge variant="outline" className="text-xs">System</Badge>
                       )}
+                      {page.parent_slug === "products" && (
+                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">Product</Badge>
+                      )}
+                      {page.parent_slug === "services" && (
+                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Service</Badge>
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {getViewUrl(page.slug)} • Updated {new Date(page.updated_at).toLocaleDateString()}
+                      {pageUrl} • Updated {new Date(page.updated_at).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => toggleVisibility(page.id, page.is_visible)}
+                      title={page.is_visible ? "Hide page" : "Show page"}
+                    >
+                      <Eye className={`h-4 w-4 ${!page.is_visible ? 'opacity-50' : ''}`} />
+                    </Button>
                     <Button variant="ghost" size="sm" asChild>
-                      <a href={getViewUrl(page.slug)} target="_blank" rel="noopener noreferrer">
+                      <a href={pageUrl} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4" />
                       </a>
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => toggleStatus(page.id, page.status)}>
-                      <Eye className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => navigate(`/admin/pages/${page.id}`)}>
                       <Edit className="h-4 w-4" />

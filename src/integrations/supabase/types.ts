@@ -95,10 +95,12 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          is_visible: boolean | null
           meta_description: string | null
           meta_title: string | null
           og_image: string | null
           page_order: number | null
+          parent_slug: string | null
           slug: string
           status: string
           title: string
@@ -109,10 +111,12 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_visible?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           og_image?: string | null
           page_order?: number | null
+          parent_slug?: string | null
           slug: string
           status?: string
           title: string
@@ -123,10 +127,12 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_visible?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           og_image?: string | null
           page_order?: number | null
+          parent_slug?: string | null
           slug?: string
           status?: string
           title?: string

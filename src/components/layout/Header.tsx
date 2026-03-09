@@ -34,6 +34,46 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const fetchMenuData = async () => {
+      // Fetch product pages
+      const { data: productPages } = await supabase
+        .from("pages")
+        .select("title, slug")
+        .eq("parent_slug", "products")
+        .eq("status", "published")
+        .eq("is_visible", true)
+        .order("page_order", { ascending: true });
+
+      if (productPages) {
+        setProducts(productPages.map(p => ({
+          name: p.title,
+          href: `/products/${p.slug}`,
+          description: ""
+        })));
+      }
+
+      // Fetch service pages
+      const { data: servicePages } = await supabase
+        .from("pages")
+        .select("title, slug")
+        .eq("parent_slug", "services")
+        .eq("status", "published")
+        .eq("is_visible", true)
+        .order("page_order", { ascending: true });
+
+      if (servicePages) {
+        setServices(servicePages.map(p => ({
+          name: p.title,
+          href: `/services/${p.slug}`,
+          description: ""
+        })));
+      }
+    };
+
+    fetchMenuData();
+  }, []);
+
   return (
     <>
       {/* Top Bar */}
