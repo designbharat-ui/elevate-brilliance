@@ -105,6 +105,8 @@ export default function AdminPageEditor() {
     setMetaTitle(data.meta_title || "");
     setMetaDescription(data.meta_description || "");
     setOgImage(data.og_image || "");
+    setParentSlug(data.parent_slug || "");
+    setIsVisible(data.is_visible !== false);
 
     const isSys = SYSTEM_PAGES.includes(data.slug);
     setIsSystemPage(isSys);
