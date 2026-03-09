@@ -864,100 +864,211 @@ export default function AdminPageEditor() {
           </div>
         </div>
 
-        {/* Main content area */}
+        {/* Main content area - Preview LEFT, Edit Settings RIGHT */}
         <div className={`flex ${viewMode === "split" ? "flex-row" : "flex-col"} min-h-[calc(100vh-64px)]`}>
-          {/* Editor panel */}
+          {/* Live Preview panel - LEFT SIDE */}
+          {viewMode !== "editor" && (sections.length > 0 || isSystemPage) && (
+            <div className={`${viewMode === "split" ? "w-1/2 border-r border-border" : "w-full"} bg-muted/30 flex flex-col overflow-y-auto`} style={{ maxHeight: "calc(100vh - 64px)" }}>
+              <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-2 z-10">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">Live Preview</span> — Click on any text or image to edit directly
+                </p>
+              </div>
+              <LivePreviewEditor
+                sections={sections}
+                onUpdateField={updateSectionField}
+                onImageUpload={handleImageUpload}
+                selectedSectionId={expandedSection}
+                onSelectSection={setExpandedSection}
+              />
+            </div>
+          )}
+
+          {/* Editor/Settings panel - RIGHT SIDE */}
           {viewMode !== "preview" && (
-            <div className={`${viewMode === "split" ? "w-1/2 border-r border-border overflow-y-auto" : "w-full"} p-6`}>
+            <div className={`${viewMode === "split" ? "w-1/2 overflow-y-auto" : "w-full"} p-6 bg-background`}>
               <Tabs defaultValue="content">
                 <TabsList className="w-full">
-                  <TabsTrigger value="content" className="flex-1">Visual Editor</TabsTrigger>
-                  <TabsTrigger value="seo" className="flex-1">SEO Settings</TabsTrigger>
+                  <TabsTrigger value="content" className="flex-1">
+                    {expandedSection ? "Section Settings" : "Page Settings"}
+                  </TabsTrigger>
+                  <TabsTrigger value="seo" className="flex-1">SEO</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="content" className="space-y-4 mt-4">
-                  {/* Page settings card */}
-                  <Card className="p-4 space-y-3">
-                    <div>
-                      <Label className="text-xs font-semibold">Page Title</Label>
-                      <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title..." />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="text-xs font-semibold">Parent Category</Label>
-                        <select
-                          className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
-                          value={parentSlug}
-                          onChange={(e) => setParentSlug(e.target.value)}
-                        >
-                          <option value="">None (Top Level)</option>
-                          <option value="products">Products</option>
-                          <option value="services">Services</option>
-                        </select>
-                      </div>
-                      <div>
-                        <Label className="text-xs font-semibold">Visibility</Label>
-                        <select
-                          className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
-                          value={isVisible ? "visible" : "hidden"}
-                          onChange={(e) => setIsVisible(e.target.value === "visible")}
-                        >
-                          <option value="visible">Visible in Menus</option>
-                          <option value="hidden">Hidden</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-xs font-semibold">URL Slug</Label>
-                      <div className="flex items-center gap-1">
-                        <span className="text-muted-foreground text-sm">{parentSlug ? `/${parentSlug}/` : '/'}</span>
-                        <Input value={slug} onChange={(e) => setSlug(e.target.value)} disabled={isSystemPage} />
-                      </div>
-                      {isSystemPage && <p className="text-xs text-muted-foreground mt-1">System page slug cannot be changed.</p>}
-                    </div>
-                  </Card>
-
-                  {/* Visual sections */}
-                  {(isSystemPage || sections.length > 0) ? (
-                    <div className="space-y-3">
+                  {/* Show section editor if a section is selected */}
+                  {expandedSection && (sections.length > 0 || isSystemPage) ? (
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-sm text-foreground">
-                          Page Sections ({sections.length})
-                          <span className="text-xs text-muted-foreground ml-2">Hover to edit</span>
+                        <h3 className="font-semibold text-foreground flex items-center gap-2">
+                          <Pencil className="h-4 w-4 text-gold" />
+                          Edit Section
                         </h3>
-                        <Button variant="outline" size="sm" onClick={addSection}>
-                          <Plus className="h-3 w-3 mr-1" /> Add Section
+                        <Button variant="ghost" size="sm" onClick={() => setExpandedSection(null)}>
+                          <X className="h-4 w-4 mr-1" /> Close
                         </Button>
                       </div>
-                      {sections.map((section, idx) => renderVisualSection(section, idx))}
-                      {sections.length === 0 && (
-                        <Card className="p-12 text-center text-muted-foreground">
-                          <p className="mb-2">No sections yet.</p>
-                          <Button variant="outline" onClick={addSection}>
-                            <Plus className="h-4 w-4 mr-2" /> Add First Section
-                          </Button>
+                      {sections.find(s => s.id === expandedSection) && (
+                        <Card className="p-4 space-y-4">
+                          <div className="flex items-center justify-between border-b border-border pb-3">
+                            <Badge variant="secondary">
+                              {TYPE_CONFIG[sections.find(s => s.id === expandedSection)?.type || ""]?.emoji}{" "}
+                              {TYPE_CONFIG[sections.find(s => s.id === expandedSection)?.type || ""]?.label}
+                            </Badge>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const idx = sections.findIndex(s => s.id === expandedSection);
+                                  moveSection(idx, -1);
+                                }}
+                                disabled={sections.findIndex(s => s.id === expandedSection) === 0}
+                              >
+                                <ChevronUp className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const idx = sections.findIndex(s => s.id === expandedSection);
+                                  moveSection(idx, 1);
+                                }}
+                                disabled={sections.findIndex(s => s.id === expandedSection) === sections.length - 1}
+                              >
+                                <ChevronDown className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  removeSection(expandedSection);
+                                  setExpandedSection(null);
+                                }}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                            {Object.entries(sections.find(s => s.id === expandedSection)?.fields || {}).map(([key, val]) =>
+                              renderFieldEditor(expandedSection, key, val)
+                            )}
+                          </div>
                         </Card>
                       )}
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-sm text-foreground">Content Blocks ({blocks.length})</h3>
-                        <div className="flex gap-1">
-                          <Button variant="outline" size="sm" onClick={() => addBlock("heading")}><Type className="h-3 w-3 mr-1" /> H</Button>
-                          <Button variant="outline" size="sm" onClick={() => addBlock("paragraph")}><FileText className="h-3 w-3 mr-1" /> P</Button>
-                          <Button variant="outline" size="sm" onClick={() => addBlock("image")}><ImageIcon className="h-3 w-3 mr-1" /> Img</Button>
-                          <Button variant="outline" size="sm" onClick={() => addBlock("section")}><Layout className="h-3 w-3 mr-1" /> HTML</Button>
+                    <>
+                      {/* Page settings card */}
+                      <Card className="p-4 space-y-3">
+                        <div>
+                          <Label className="text-xs font-semibold">Page Title</Label>
+                          <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title..." />
                         </div>
-                      </div>
-                      {blocks.map((block, idx) => renderBlockEditor(block, idx))}
-                      {blocks.length === 0 && (
-                        <Card className="p-12 text-center text-muted-foreground">
-                          <p className="mb-2">No content blocks yet.</p>
-                          <p className="text-xs">Add blocks above to build your page.</p>
-                        </Card>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label className="text-xs font-semibold">Parent Category</Label>
+                            <select
+                              className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                              value={parentSlug}
+                              onChange={(e) => setParentSlug(e.target.value)}
+                            >
+                              <option value="">None (Top Level)</option>
+                              <option value="products">Products</option>
+                              <option value="services">Services</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-xs font-semibold">Visibility</Label>
+                            <select
+                              className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                              value={isVisible ? "visible" : "hidden"}
+                              onChange={(e) => setIsVisible(e.target.value === "visible")}
+                            >
+                              <option value="visible">Visible in Menus</option>
+                              <option value="hidden">Hidden</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-xs font-semibold">URL Slug</Label>
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground text-sm">{parentSlug ? `/${parentSlug}/` : '/'}</span>
+                            <Input value={slug} onChange={(e) => setSlug(e.target.value)} disabled={isSystemPage} />
+                          </div>
+                          {isSystemPage && <p className="text-xs text-muted-foreground mt-1">System page slug cannot be changed.</p>}
+                        </div>
+                      </Card>
+
+                      {/* Sections list */}
+                      {(isSystemPage || sections.length > 0) ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-sm text-foreground">
+                              Page Sections ({sections.length})
+                            </h3>
+                            <Button variant="outline" size="sm" onClick={addSection}>
+                              <Plus className="h-3 w-3 mr-1" /> Add Section
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
+                            {sections.map((section, idx) => {
+                              const config = TYPE_CONFIG[section.type] || { emoji: "📄", label: section.type };
+                              return (
+                                <div
+                                  key={section.id}
+                                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
+                                    expandedSection === section.id
+                                      ? "border-gold bg-gold/5"
+                                      : "border-border hover:border-gold/50 hover:bg-muted/50"
+                                  }`}
+                                  onClick={() => setExpandedSection(section.id)}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-lg">{config.emoji}</span>
+                                    <div>
+                                      <p className="font-medium text-sm text-foreground">{config.label}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {section.fields?.title || section.fields?.label || `Section ${idx + 1}`}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Pencil className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {sections.length === 0 && (
+                            <Card className="p-8 text-center text-muted-foreground">
+                              <p className="mb-2">No sections yet.</p>
+                              <Button variant="outline" onClick={addSection}>
+                                <Plus className="h-4 w-4 mr-2" /> Add First Section
+                              </Button>
+                            </Card>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-sm text-foreground">Content Blocks ({blocks.length})</h3>
+                            <div className="flex gap-1">
+                              <Button variant="outline" size="sm" onClick={() => addBlock("heading")}><Type className="h-3 w-3 mr-1" /> H</Button>
+                              <Button variant="outline" size="sm" onClick={() => addBlock("paragraph")}><FileText className="h-3 w-3 mr-1" /> P</Button>
+                              <Button variant="outline" size="sm" onClick={() => addBlock("image")}><ImageIcon className="h-3 w-3 mr-1" /> Img</Button>
+                              <Button variant="outline" size="sm" onClick={() => addBlock("section")}><Layout className="h-3 w-3 mr-1" /> HTML</Button>
+                            </div>
+                          </div>
+                          {blocks.map((block, idx) => renderBlockEditor(block, idx))}
+                          {blocks.length === 0 && (
+                            <Card className="p-8 text-center text-muted-foreground">
+                              <p className="mb-2">No content blocks yet.</p>
+                              <p className="text-xs">Add blocks above to build your page.</p>
+                            </Card>
+                          )}
+                        </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </TabsContent>
 
@@ -989,17 +1100,6 @@ export default function AdminPageEditor() {
                   </Card>
                 </TabsContent>
               </Tabs>
-            </div>
-          )}
-
-          {/* Live Preview panel */}
-          {viewMode !== "editor" && (sections.length > 0 || isSystemPage) && (
-            <div className={`${viewMode === "split" ? "w-1/2" : "w-full"} bg-background flex flex-col overflow-y-auto`} style={{ maxHeight: "calc(100vh - 64px)" }}>
-              <LivePreviewEditor
-                sections={sections}
-                onUpdateField={updateSectionField}
-                onImageUpload={handleImageUpload}
-              />
             </div>
           )}
         </div>

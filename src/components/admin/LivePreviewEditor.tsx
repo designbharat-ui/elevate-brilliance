@@ -14,6 +14,8 @@ interface LivePreviewEditorProps {
   sections: PageSection[];
   onUpdateField: (sectionId: string, fieldName: string, value: any) => void;
   onImageUpload: (file: File, callback: (url: string) => void) => void;
+  selectedSectionId?: string | null;
+  onSelectSection?: (sectionId: string | null) => void;
 }
 
 type EditableTag = "span" | "h1" | "h2" | "h3" | "p" | "div";
@@ -152,7 +154,7 @@ function EditableArrayItem({
   return <>{items.map((item, i) => renderItem(item, i, updateItem))}</>;
 }
 
-export function LivePreviewEditor({ sections, onUpdateField, onImageUpload }: LivePreviewEditorProps) {
+export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, selectedSectionId, onSelectSection }: LivePreviewEditorProps) {
   const handleImageChange = (sectionId: string, fieldName: string) => (file: File) => {
     onImageUpload(file, (url) => onUpdateField(sectionId, fieldName, url));
   };
@@ -163,6 +165,12 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload }: Li
       newItems[idx] = { ...newItems[idx], [key]: url };
       onUpdateField(sectionId, fieldName, newItems);
     });
+  };
+
+  const handleSectionClick = (sectionId: string) => (e: React.MouseEvent) => {
+    // Only select section if clicking on the wrapper, not on editable elements
+    if ((e.target as HTMLElement).closest('[data-editable="true"]')) return;
+    onSelectSection?.(sectionId);
   };
 
   const renderSection = (section: PageSection) => {
@@ -932,13 +940,25 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload }: Li
 
   return (
     <div className="live-preview-editor">
-      {/* Info bar */}
-      <div className="bg-gold/10 border-b border-gold/20 px-4 py-2 text-center">
-        <p className="text-xs text-gold font-medium">
-          ✏️ Live Edit Mode — Click any text or hover over images to edit directly
-        </p>
-      </div>
-      {sections.map(renderSection)}
+      {sections.map((section) => (
+        <div
+          key={section.id}
+          onClick={handleSectionClick(section.id)}
+          className={`relative cursor-pointer transition-all ${
+            selectedSectionId === section.id
+              ? "ring-2 ring-gold ring-offset-2"
+              : "hover:ring-1 hover:ring-gold/30"
+          }`}
+        >
+          {/* Section type indicator */}
+          {selectedSectionId === section.id && (
+            <div className="absolute top-2 right-2 z-20 bg-gold text-primary text-xs font-medium px-2 py-1 rounded shadow-lg">
+              ✏️ Editing
+            </div>
+          )}
+          {renderSection(section)}
+        </div>
+      ))}
     </div>
   );
 }
