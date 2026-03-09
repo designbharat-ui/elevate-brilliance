@@ -11,29 +11,20 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import logoImage from "@/assets/logo.png";
-const products = [
-  { name: "Home Lift", href: "/products/home-lift", description: "Elegant residential elevators" },
-  { name: "Passenger Lift", href: "/products/passenger-lift", description: "Commercial & residential" },
-  { name: "Hospital Lift", href: "/products/hospital-lift", description: "Medical-grade elevators" },
-  { name: "Capsule Lift", href: "/products/capsule-lift", description: "Panoramic glass elevators" },
-  { name: "MRL Lift", href: "/products/mrl-lift", description: "Machine room-less design" },
-  { name: "Freight Lift", href: "/products/freight-lift", description: "Heavy-duty goods elevator" },
-  { name: "Escalator", href: "/products/escalator", description: "Moving stairs solutions" },
-  { name: "Moving Walk", href: "/products/moving-walk", description: "Horizontal transportation" },
-];
 
-const services = [
-  { name: "AMC Services", href: "/services/amc", description: "Annual maintenance contracts" },
-  { name: "Maintenance", href: "/services/maintenance", description: "Regular servicing" },
-  { name: "Repair Services", href: "/services/repair", description: "Quick repair solutions" },
-  { name: "Modernization", href: "/services/modernization", description: "Elevator upgrades" },
-  { name: "Customization", href: "/services/customization", description: "Bespoke solutions" },
-];
+interface MenuItem {
+  name: string;
+  href: string;
+  description?: string;
+}
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [products, setProducts] = useState<MenuItem[]>([]);
+  const [services, setServices] = useState<MenuItem[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
