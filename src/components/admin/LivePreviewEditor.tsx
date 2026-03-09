@@ -154,7 +154,7 @@ function EditableArrayItem({
   return <>{items.map((item, i) => renderItem(item, i, updateItem))}</>;
 }
 
-export function LivePreviewEditor({ sections, onUpdateField, onImageUpload }: LivePreviewEditorProps) {
+export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, selectedSectionId, onSelectSection }: LivePreviewEditorProps) {
   const handleImageChange = (sectionId: string, fieldName: string) => (file: File) => {
     onImageUpload(file, (url) => onUpdateField(sectionId, fieldName, url));
   };
@@ -165,6 +165,12 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload }: Li
       newItems[idx] = { ...newItems[idx], [key]: url };
       onUpdateField(sectionId, fieldName, newItems);
     });
+  };
+
+  const handleSectionClick = (sectionId: string) => (e: React.MouseEvent) => {
+    // Only select section if clicking on the wrapper, not on editable elements
+    if ((e.target as HTMLElement).closest('[data-editable="true"]')) return;
+    onSelectSection?.(sectionId);
   };
 
   const renderSection = (section: PageSection) => {
