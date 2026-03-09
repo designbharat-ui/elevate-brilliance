@@ -16,17 +16,19 @@ interface LivePreviewEditorProps {
   onImageUpload: (file: File, callback: (url: string) => void) => void;
 }
 
+type EditableTag = "span" | "h1" | "h2" | "h3" | "p" | "div";
+
 function EditableText({
   value,
   onChange,
   className = "",
-  tag: Tag = "span",
+  tag = "span",
   multiline = false,
 }: {
   value: string;
   onChange: (val: string) => void;
   className?: string;
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: EditableTag;
   multiline?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
