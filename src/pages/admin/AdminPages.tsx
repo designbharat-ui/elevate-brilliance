@@ -88,7 +88,11 @@ export default function AdminPages() {
     fetchPages();
   };
 
-  const getViewUrl = (slug: string) => SLUG_TO_ROUTE[slug] || `/page/${slug}`;
+  const toggleVisibility = async (id: string, currentVisibility: boolean) => {
+    await supabase.from("pages").update({ is_visible: !currentVisibility }).eq("id", id);
+    toast.success(currentVisibility ? "Page hidden" : "Page visible");
+    fetchPages();
+  };
 
   const filtered = pages.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase()) ||
