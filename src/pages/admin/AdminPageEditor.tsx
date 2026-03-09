@@ -993,31 +993,12 @@ export default function AdminPageEditor() {
           )}
 
           {/* Live Preview panel */}
-          {viewMode !== "editor" && previewUrl && (
-            <div className={`${viewMode === "split" ? "w-1/2" : "w-full"} bg-muted/30 flex flex-col`}>
-              <div className="flex items-center justify-between px-4 py-2 bg-muted border-b border-border">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-destructive/60" />
-                    <span className="w-3 h-3 rounded-full bg-gold/60" />
-                    <span className="w-3 h-3 rounded-full bg-green-500/60" />
-                  </div>
-                  <span className="text-xs text-muted-foreground font-mono">{previewUrl}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Live Preview — Save to refresh</span>
-                  <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setPreviewKey(k => k + 1)}>
-                    ↺ Refresh
-                  </Button>
-                </div>
-              </div>
-              <iframe
-                key={previewKey}
-                ref={iframeRef}
-                src={previewUrl}
-                className="flex-1 w-full border-0"
-                title="Page Preview"
-                style={{ minHeight: "calc(100vh - 120px)" }}
+          {viewMode !== "editor" && (sections.length > 0 || isSystemPage) && (
+            <div className={`${viewMode === "split" ? "w-1/2" : "w-full"} bg-background flex flex-col overflow-y-auto`} style={{ maxHeight: "calc(100vh - 64px)" }}>
+              <LivePreviewEditor
+                sections={sections}
+                onUpdateField={updateSectionField}
+                onImageUpload={handleImageUpload}
               />
             </div>
           )}
