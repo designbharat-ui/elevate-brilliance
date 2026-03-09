@@ -46,6 +46,8 @@ interface Page {
   status: string;
   updated_at: string;
   meta_title: string | null;
+  parent_slug: string | null;
+  is_visible: boolean;
 }
 
 export default function AdminPages() {
