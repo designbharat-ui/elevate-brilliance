@@ -59,7 +59,7 @@ export default function AdminPages() {
   const fetchPages = async () => {
     const { data } = await supabase
       .from("pages")
-      .select("id, title, slug, status, updated_at, meta_title")
+      .select("id, title, slug, status, updated_at, meta_title, parent_slug, is_visible")
       .order("page_order", { ascending: true });
     setPages(data || []);
     setLoading(false);
