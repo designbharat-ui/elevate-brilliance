@@ -150,10 +150,10 @@ export default function AdminPages() {
                         <Badge variant="outline" className="text-xs">System</Badge>
                       )}
                       {page.parent_slug === "products" && (
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">Product</Badge>
+                        <Badge variant="outline" className="text-xs">Product</Badge>
                       )}
                       {page.parent_slug === "services" && (
-                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Service</Badge>
+                        <Badge variant="outline" className="text-xs">Service</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
