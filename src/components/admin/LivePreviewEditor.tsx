@@ -72,8 +72,9 @@ function EditableText({
     );
   }
 
+  const TagEl = tag;
   return (
-    <Tag
+    <TagEl
       ref={ref as any}
       className={`${className} cursor-pointer hover:outline-2 hover:outline-dashed hover:outline-gold/60 hover:outline-offset-2 transition-all group/text relative`}
       onClick={() => { setTempVal(value); setEditing(true); }}
@@ -81,7 +82,7 @@ function EditableText({
     >
       {value || <span className="italic opacity-50">Click to edit...</span>}
       <Pencil className="absolute -top-2 -right-2 h-3.5 w-3.5 text-gold opacity-0 group-hover/text:opacity-100 transition-opacity bg-background rounded-full p-0.5 shadow" />
-    </Tag>
+    </TagEl>
   );
 }
 
