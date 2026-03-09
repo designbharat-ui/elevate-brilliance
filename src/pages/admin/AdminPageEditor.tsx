@@ -87,6 +87,8 @@ export default function AdminPageEditor() {
   const [sections, setSections] = useState<PageSection[]>([]);
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [parentSlug, setParentSlug] = useState<string>("");
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (!isNew && id) loadPage(id);
