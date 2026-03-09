@@ -244,88 +244,84 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
     switch (section.type) {
       case "hero":
         return (
-          <section key={sid} className="relative py-24 bg-gradient-hero overflow-hidden">
-            {f.bg_image && (
-              <div className="absolute inset-0">
-                <EditableImage
-                  src={f.bg_image}
-                  className="w-full h-full"
-                  onUpload={handleImageChange(sid, "bg_image")}
-                  overlayText="Change Hero Background"
-                />
-                <div className="absolute inset-0 bg-primary/85" />
-              </div>
-            )}
-            {!f.bg_image && (
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
-              </div>
-            )}
-            <div className="container relative z-10">
-              <div className="max-w-3xl">
-                {f.label !== undefined && (
-                  <EditableText
-                    value={f.label}
-                    onChange={(v) => onUpdateField(sid, "label", v)}
-                    className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4"
-                    tag="span"
-                  />
-                )}
-                <div className="mb-6">
-                  <EditableText
-                    value={f.title || ""}
-                    onChange={(v) => onUpdateField(sid, "title", v)}
-                    className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground block"
-                    tag="h1"
-                  />
-                  {f.highlight_text !== undefined && (
-                    <EditableText
-                      value={f.highlight_text}
-                      onChange={(v) => onUpdateField(sid, "highlight_text", v)}
-                      className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gold block mt-1"
-                      tag="span"
-                    />
-                  )}
+          <EditableBackgroundImage
+            key={sid}
+            src={f.bg_image}
+            onUpload={handleImageChange(sid, "bg_image")}
+            overlayOpacity={0.85}
+          >
+            <section className="py-24 bg-gradient-hero overflow-hidden">
+              {!f.bg_image && (
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-gold/30 to-transparent" />
                 </div>
-                {f.subtitle !== undefined && (
-                  <EditableText
-                    value={f.subtitle}
-                    onChange={(v) => onUpdateField(sid, "subtitle", v)}
-                    className="text-primary-foreground text-xl font-semibold mb-4 block"
-                    tag="p"
-                  />
-                )}
-                {f.description !== undefined && (
-                  <EditableText
-                    value={f.description}
-                    onChange={(v) => onUpdateField(sid, "description", v)}
-                    className="text-primary-foreground/80 text-lg block"
-                    tag="p"
-                    multiline
-                  />
-                )}
-                {/* CTA buttons display */}
-                <div className="flex gap-4 mt-8">
-                  {f.cta_primary_text && (
+              )}
+              <div className="container relative z-10">
+                <div className="max-w-3xl">
+                  {f.label !== undefined && (
                     <EditableText
-                      value={f.cta_primary_text}
-                      onChange={(v) => onUpdateField(sid, "cta_primary_text", v)}
-                      className="btn-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                      value={f.label}
+                      onChange={(v) => onUpdateField(sid, "label", v)}
+                      className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4"
                       tag="span"
                     />
                   )}
-                  {f.cta_secondary_text && (
+                  <div className="mb-6">
                     <EditableText
-                      value={f.cta_secondary_text}
-                      onChange={(v) => onUpdateField(sid, "cta_secondary_text", v)}
-                      className="btn-outline-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
-                      tag="span"
+                      value={f.title || ""}
+                      onChange={(v) => onUpdateField(sid, "title", v)}
+                      className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground block"
+                      tag="h1"
+                    />
+                    {f.highlight_text !== undefined && (
+                      <EditableText
+                        value={f.highlight_text}
+                        onChange={(v) => onUpdateField(sid, "highlight_text", v)}
+                        className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gold block mt-1"
+                        tag="span"
+                      />
+                    )}
+                  </div>
+                  {f.subtitle !== undefined && (
+                    <EditableText
+                      value={f.subtitle}
+                      onChange={(v) => onUpdateField(sid, "subtitle", v)}
+                      className="text-primary-foreground text-xl font-semibold mb-4 block"
+                      tag="p"
                     />
                   )}
+                  {f.description !== undefined && (
+                    <EditableText
+                      value={f.description}
+                      onChange={(v) => onUpdateField(sid, "description", v)}
+                      className="text-primary-foreground/80 text-lg block"
+                      tag="p"
+                      multiline
+                    />
+                  )}
+                  {/* CTA buttons display */}
+                  <div className="flex gap-4 mt-8">
+                    {f.cta_primary_text && (
+                      <EditableText
+                        value={f.cta_primary_text}
+                        onChange={(v) => onUpdateField(sid, "cta_primary_text", v)}
+                        className="btn-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                        tag="span"
+                      />
+                    )}
+                    {f.cta_secondary_text && (
+                      <EditableText
+                        value={f.cta_secondary_text}
+                        onChange={(v) => onUpdateField(sid, "cta_secondary_text", v)}
+                        className="btn-outline-gold px-6 py-3 rounded-lg text-sm font-medium inline-block"
+                        tag="span"
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </EditableBackgroundImage>
         );
 
       case "stats":
