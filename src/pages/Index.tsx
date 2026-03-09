@@ -7,8 +7,11 @@ import { StatsSection } from "@/components/sections/StatsSection";
 import { ProductsSection } from "@/components/sections/ProductsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { WhyChooseSection } from "@/components/sections/WhyChooseSection";
+import { usePageContent } from "@/hooks/usePageContent";
 
 const Index = () => {
+  const { page } = usePageContent("home");
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -23,8 +26,8 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Premium Elevator & Escalator Solutions in India"
-        description="Rising Star Elevator - 21+ years of excellence in elevators, escalators, and vertical transportation. 3000+ installations across India. Get free quote today!"
+        title={page?.meta_title || "Premium Elevator & Escalator Solutions in India"}
+        description={page?.meta_description || "Rising Star Elevator - 21+ years of excellence in elevators, escalators, and vertical transportation. 3000+ installations across India. Get free quote today!"}
         keywords="elevator company India, lift manufacturer, escalator supplier, home lift, passenger elevator, hospital lift, MRL elevator, Delhi NCR"
         canonicalUrl="/"
         structuredData={structuredData}

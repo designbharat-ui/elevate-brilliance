@@ -11,10 +11,11 @@ import { Play } from "lucide-react";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { usePageContent } from "@/hooks/usePageContent";
 
-const images = [elevator1, elevator2, elevator3, elevator4, elevator5, elevator1, elevator2, elevator3];
+const defaultImages = [elevator1, elevator2, elevator3, elevator4, elevator5, elevator1, elevator2, elevator3];
 
-const videos = [
+const defaultVideos = [
   { src: "/videos/elevator-video-1.mp4", title: "Elevator Installation 1" },
   { src: "/videos/elevator-video-2.mp4", title: "Elevator Installation 2" },
   { src: "/videos/elevator-video-3.mp4", title: "Elevator Project 3" },
@@ -26,29 +27,32 @@ const videos = [
 ];
 
 export default function Gallery() {
+  const { page, getField } = usePageContent("gallery");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const heroLabel = getField("hero", "label", "Gallery");
+  const heroTitle = getField("hero", "title", "Our Work");
+  const heroDescription = getField("hero", "description", "Explore our premium elevator installations, designs, and project videos.");
+  const photoLabel = getField("photos", "label", "Photo Gallery");
+  const photoTitle = getField("photos", "title", "Our Installations");
+  const photoDesc = getField("photos", "description", "Browse through our collection of premium elevator installations across India.");
+  const videoLabel = getField("videos", "label", "Video Gallery");
+  const videoTitle = getField("videos", "title", "Watch Our Projects");
+  const videoDesc = getField("videos", "description", "Experience our elevator installations in action through customer videos.");
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ImageGallery",
-    "name": "Rising Star Elevator Project Gallery",
-    "description": "View our premium elevator installations and designs across India.",
-  };
-
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Gallery - Elevator Installation Photos & Videos"
-        description="Explore Rising Star Elevator's project gallery featuring premium elevator installations, modern lift designs, and escalator projects across Delhi NCR and India."
+        title={page?.meta_title || "Gallery - Elevator Installation Photos & Videos"}
+        description={page?.meta_description || "Explore Rising Star Elevator's project gallery featuring premium elevator installations, modern lift designs, and escalator projects across Delhi NCR and India."}
         keywords="elevator gallery, lift installation photos, elevator design India, premium lift images, escalator photos, Rising Star projects, elevator videos"
         canonicalUrl="/gallery"
-        structuredData={structuredData}
       />
       <Header />
       <main>
@@ -59,68 +63,50 @@ export default function Gallery() {
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Gallery</span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{heroLabel}</span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-                Our <span className="text-gradient-gold">Work</span>
+                {heroTitle.includes("Work") ? <>Our <span className="text-gradient-gold">Work</span></> : heroTitle}
               </h1>
-              <p className="text-primary-foreground/80 text-lg">Explore our premium elevator installations, designs, and project videos.</p>
+              <p className="text-primary-foreground/80 text-lg">{heroDescription}</p>
             </div>
           </div>
         </section>
 
-        {/* Photo Gallery Section */}
         <section className="section-padding bg-background">
           <div className="container">
             <div className="text-center mb-12">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Photo Gallery</span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{photoLabel}</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Our <span className="text-gradient-gold">Installations</span>
+                {photoTitle.includes("Installations") ? <>Our <span className="text-gradient-gold">Installations</span></> : photoTitle}
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Browse through our collection of premium elevator installations across India.</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">{photoDesc}</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {images.map((img, i) => (
-                <div 
-                  key={i} 
-                  className="aspect-square rounded-lg overflow-hidden group cursor-pointer shadow-lg"
-                  onClick={() => openLightbox(i)}
-                >
+              {defaultImages.map((img, i) => (
+                <div key={i} className="aspect-square rounded-lg overflow-hidden group cursor-pointer shadow-lg" onClick={() => openLightbox(i)}>
                   <img src={img} alt={`Elevator Project ${i + 1}`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 </div>
               ))}
             </div>
-
-            <Lightbox
-              open={lightboxOpen}
-              close={() => setLightboxOpen(false)}
-              index={lightboxIndex}
-              slides={images.map((img) => ({ src: img }))}
-            />
+            <Lightbox open={lightboxOpen} close={() => setLightboxOpen(false)} index={lightboxIndex} slides={defaultImages.map(img => ({ src: img }))} />
           </div>
         </section>
 
-        {/* Video Gallery Section */}
         <section className="section-padding bg-secondary/30">
           <div className="container">
             <div className="text-center mb-12">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Video Gallery</span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{videoLabel}</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Watch Our <span className="text-gradient-gold">Projects</span>
+                {videoTitle.includes("Projects") ? <>Watch Our <span className="text-gradient-gold">Projects</span></> : videoTitle}
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Experience our elevator installations in action through customer videos.</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">{videoDesc}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {videos.map((video, i) => (
+              {defaultVideos.map((video, i) => (
                 <div key={i} className="rounded-xl overflow-hidden shadow-lg bg-card group">
                   <div className="aspect-video relative">
-                    <video
-                      className="w-full h-full object-cover"
-                      controls
-                      preload="metadata"
-                      poster=""
-                    >
+                    <video className="w-full h-full object-cover" controls preload="metadata">
                       <source src={video.src} type="video/mp4" />
-                      Your browser does not support the video tag.
                     </video>
                     <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                       <Play className="w-12 h-12 text-primary-foreground" />
