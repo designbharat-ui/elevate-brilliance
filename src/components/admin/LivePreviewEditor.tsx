@@ -14,6 +14,8 @@ interface LivePreviewEditorProps {
   sections: PageSection[];
   onUpdateField: (sectionId: string, fieldName: string, value: any) => void;
   onImageUpload: (file: File, callback: (url: string) => void) => void;
+  selectedSectionId?: string | null;
+  onSelectSection?: (sectionId: string | null) => void;
 }
 
 type EditableTag = "span" | "h1" | "h2" | "h3" | "p" | "div";
