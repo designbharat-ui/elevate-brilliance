@@ -105,7 +105,11 @@ export default function AdminPages() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground">Pages</h1>
-            <p className="text-sm text-muted-foreground mt-1">{pages.length} pages total • {pages.filter(p => SYSTEM_PAGES.includes(p.slug)).length} system pages</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {pages.length} pages total • {pages.filter(p => SYSTEM_PAGES.includes(p.slug)).length} system • 
+              {" "}{pages.filter(p => p.parent_slug === "products").length} products • 
+              {" "}{pages.filter(p => p.parent_slug === "services").length} services
+            </p>
           </div>
           <Button onClick={() => navigate("/admin/pages/new")} className="btn-gold">
             <Plus className="h-4 w-4 mr-2" /> New Page
