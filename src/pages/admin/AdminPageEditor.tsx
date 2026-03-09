@@ -15,7 +15,7 @@ import type { Json } from "@/integrations/supabase/types";
 import {
   ArrowLeft, Save, Plus, Trash2, ChevronUp, ChevronDown,
   FileText, Image as ImageIcon, Type, Layout, GripVertical,
-  Eye, Upload, ChevronRight, ExternalLink, Pencil
+  Eye, Upload, ExternalLink, Pencil, Monitor, X, Check
 } from "lucide-react";
 
 interface PageSection {
@@ -75,6 +75,7 @@ export default function AdminPageEditor() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isNew = id === "new";
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -89,6 +90,8 @@ export default function AdminPageEditor() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [parentSlug, setParentSlug] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
+  const [viewMode, setViewMode] = useState<"split" | "editor" | "preview">("split");
+  const [previewKey, setPreviewKey] = useState(0);
 
   useEffect(() => {
     if (!isNew && id) loadPage(id);
@@ -225,6 +228,7 @@ export default function AdminPageEditor() {
       toast.error(error.message);
     } else {
       toast.success(isNew ? "Page created!" : "Page saved!");
+      setPreviewKey(k => k + 1); // refresh iframe
       if (isNew) navigate("/admin/pages");
     }
     setSaving(false);
@@ -245,6 +249,12 @@ export default function AdminPageEditor() {
           </h2>
           {f.subtitle && <p className="text-primary-foreground text-lg font-semibold">{f.subtitle}</p>}
           {f.description && <p className="text-primary-foreground/70 text-sm">{f.description}</p>}
+          {f.bg_image && (
+            <div className="mt-2 rounded overflow-hidden h-20 relative">
+              <img src={f.bg_image} alt="Hero background" className="w-full h-full object-cover opacity-40" />
+              <span className="absolute inset-0 flex items-center justify-center text-xs text-primary-foreground">Background Image</span>
+            </div>
+          )}
           {f.cta_primary_text && (
             <div className="flex gap-2 mt-2">
               <span className="bg-gold/20 text-gold px-3 py-1 rounded text-xs">{f.cta_primary_text}</span>
@@ -330,7 +340,11 @@ export default function AdminPageEditor() {
           {f.content && <p className="text-sm text-muted-foreground line-clamp-3">{f.content}</p>}
           {f.paragraphs && <p className="text-sm text-muted-foreground line-clamp-3">{f.paragraphs[0]}</p>}
           {f.highlight && <p className="text-gold text-xs italic mt-2">"{f.highlight}"</p>}
-          {f.image && <div className="mt-2 h-16 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">📷 Image attached</div>}
+          {f.image && (
+            <div className="mt-2 rounded overflow-hidden h-20">
+              <img src={f.image} alt="" className="w-full h-full object-cover" />
+            </div>
+          )}
         </div>
       );
     }
@@ -379,7 +393,13 @@ export default function AdminPageEditor() {
           <p className="font-display font-bold text-foreground mb-2">Photo Gallery</p>
           <div className="grid grid-cols-4 gap-1">
             {f.images?.slice(0, 4).map((img: any, i: number) => (
-              <div key={i} className="aspect-square bg-muted rounded flex items-center justify-center text-lg">🖼️</div>
+              <div key={i} className="aspect-square bg-muted rounded overflow-hidden">
+                {typeof img === 'string' && img.startsWith('http') ? (
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-lg">🖼️</div>
+                )}
+              </div>
             ))}
           </div>
           {f.images?.length > 4 && <p className="text-xs text-muted-foreground mt-1">+{f.images.length - 4} more photos</p>}
@@ -523,7 +543,29 @@ export default function AdminPageEditor() {
                 {Object.entries(item).map(([itemKey, itemVal]) => (
                   <div key={itemKey} className="space-y-1">
                     <Label className="text-xs text-muted-foreground capitalize">{itemKey}</Label>
-                    {typeof itemVal === "string" && itemVal.length > 80 ? (
+                    {/* Image field inside array item */}
+                    {typeof itemVal === "string" && (itemKey.includes("image") || itemKey.includes("photo") || itemKey.includes("src") || itemKey.includes("bg")) ? (
+                      <div className="space-y-1">
+                        {itemVal && <img src={itemVal} alt="" className="max-h-16 rounded object-cover" />}
+                        <div className="flex gap-1">
+                          <Input value={itemVal} onChange={(e) => {
+                            const newArr = [...value];
+                            newArr[i] = { ...newArr[i], [itemKey]: e.target.value };
+                            updateSectionField(sectionId, key, newArr);
+                          }} className="text-sm flex-1" placeholder="Image URL..." />
+                          <label className="cursor-pointer">
+                            <Button variant="outline" size="sm" asChild><span><Upload className="h-3 w-3" /></span></Button>
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                              if (e.target.files?.[0]) handleImageUpload(e.target.files[0], (url) => {
+                                const newArr = [...value];
+                                newArr[i] = { ...newArr[i], [itemKey]: url };
+                                updateSectionField(sectionId, key, newArr);
+                              });
+                            }} />
+                          </label>
+                        </div>
+                      </div>
+                    ) : typeof itemVal === "string" && itemVal.length > 80 ? (
                       <Textarea value={itemVal} rows={2} onChange={(e) => {
                         const newArr = [...value];
                         newArr[i] = { ...newArr[i], [itemKey]: e.target.value };
@@ -598,16 +640,28 @@ export default function AdminPageEditor() {
       );
     }
 
-    // Image fields
-    if (typeof value === "string" && (key.includes("image") || key.includes("bg_image") || key.includes("photo") || key.includes("src"))) {
+    // Image / background image fields
+    if (typeof value === "string" && (key.includes("image") || key.includes("bg_image") || key.includes("bg") || key.includes("photo") || key.includes("src"))) {
       return (
         <div key={key} className="space-y-2">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{key.replace(/_/g, " ")}</Label>
-          {value && <img src={value} alt="" className="max-h-24 rounded-lg object-cover" />}
+          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            {key.replace(/_/g, " ")} {key.includes("bg") && <span className="text-gold">(Background Image)</span>}
+          </Label>
+          {value && (
+            <div className="relative rounded-lg overflow-hidden h-28">
+              <img src={value} alt="" className="w-full h-full object-cover" />
+              <button
+                onClick={() => updateSectionField(sectionId, key, "")}
+                className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
           <div className="flex gap-2">
             <Input value={value} onChange={(e) => updateSectionField(sectionId, key, e.target.value)} placeholder="Image URL..." className="text-sm flex-1" />
             <label className="cursor-pointer">
-              <Button variant="outline" size="sm" asChild><span><Upload className="h-3 w-3" /></span></Button>
+              <Button variant="outline" size="sm" asChild><span><Upload className="h-3 w-3 mr-1" /> Upload</span></Button>
               <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                 if (e.target.files?.[0]) handleImageUpload(e.target.files[0], (url) => updateSectionField(sectionId, key, url));
               }} />
@@ -654,7 +708,7 @@ export default function AdminPageEditor() {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
             <div className="flex items-center gap-2">
               <Button size="sm" variant="secondary" onClick={() => setExpandedSection(isExpanded ? null : section.id)}>
-                <Pencil className="h-3 w-3 mr-1" /> Edit
+                <Pencil className="h-3 w-3 mr-1" /> {isExpanded ? "Close" : "Edit"}
               </Button>
               <Button size="sm" variant="secondary" onClick={() => moveSection(idx, -1)} disabled={idx === 0}>
                 <ChevronUp className="h-3 w-3" />
@@ -683,7 +737,7 @@ export default function AdminPageEditor() {
                 <Pencil className="h-3 w-3 text-gold" /> Editing: {config.label}
               </h4>
               <Button variant="ghost" size="sm" onClick={() => setExpandedSection(null)}>
-                Close ✕
+                <X className="h-4 w-4" />
               </Button>
             </div>
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
@@ -737,27 +791,65 @@ export default function AdminPageEditor() {
     </Card>
   );
 
-  const previewUrl = !isNew && slug ? (SLUG_TO_ROUTE[slug] || `/page/${slug}`) : null;
+  const getPreviewUrl = () => {
+    if (!slug) return null;
+    if (SLUG_TO_ROUTE[slug]) return SLUG_TO_ROUTE[slug];
+    if (parentSlug === "products") return `/products/${slug}`;
+    if (parentSlug === "services") return `/services/${slug}`;
+    return `/page/${slug}`;
+  };
+
+  const previewUrl = !isNew ? getPreviewUrl() : null;
 
   return (
     <AdminLayout>
-      <div className="space-y-4">
+      <div className="space-y-0 -m-6">
         {/* Top bar */}
-        <div className="flex items-center justify-between sticky top-0 z-20 bg-background py-2 border-b border-border -mx-2 px-2">
+        <div className="flex items-center justify-between bg-background py-3 px-6 border-b border-border sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => navigate("/admin/pages")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="font-display text-xl font-bold text-foreground truncate max-w-[300px]">
+            <h1 className="font-display text-xl font-bold text-foreground truncate max-w-[200px]">
               {isNew ? "New Page" : title}
             </h1>
             {isSystemPage && <Badge variant="secondary" className="text-xs">System</Badge>}
           </div>
+
           <div className="flex items-center gap-2">
+            {/* View mode toggle */}
+            {previewUrl && (
+              <div className="flex items-center gap-1 border border-border rounded-lg p-1">
+                <Button
+                  variant={viewMode === "editor" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setViewMode("editor")}
+                >
+                  Editor
+                </Button>
+                <Button
+                  variant={viewMode === "split" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setViewMode("split")}
+                >
+                  Split
+                </Button>
+                <Button
+                  variant={viewMode === "preview" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setViewMode("preview")}
+                >
+                  <Monitor className="h-3 w-3 mr-1" /> Preview
+                </Button>
+              </div>
+            )}
             {previewUrl && (
               <Button variant="ghost" size="sm" asChild>
                 <a href={previewUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-1" /> Preview
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               </Button>
             )}
@@ -771,128 +863,163 @@ export default function AdminPageEditor() {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto">
-          <Tabs defaultValue="content">
-            <TabsList className="w-full">
-              <TabsTrigger value="content" className="flex-1">Visual Editor</TabsTrigger>
-              <TabsTrigger value="seo" className="flex-1">SEO Settings</TabsTrigger>
-            </TabsList>
+        {/* Main content area */}
+        <div className={`flex ${viewMode === "split" ? "flex-row" : "flex-col"} min-h-[calc(100vh-64px)]`}>
+          {/* Editor panel */}
+          {viewMode !== "preview" && (
+            <div className={`${viewMode === "split" ? "w-1/2 border-r border-border overflow-y-auto" : "w-full"} p-6`}>
+              <Tabs defaultValue="content">
+                <TabsList className="w-full">
+                  <TabsTrigger value="content" className="flex-1">Visual Editor</TabsTrigger>
+                  <TabsTrigger value="seo" className="flex-1">SEO Settings</TabsTrigger>
+                </TabsList>
 
-            <TabsContent value="content" className="space-y-4 mt-4">
-              {/* Page title/slug card */}
-              <Card className="p-4 space-y-3">
-                <div>
-                  <Label className="text-xs font-semibold">Page Title</Label>
-                  <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title..." />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs font-semibold">Parent Category</Label>
-                    <select 
-                      className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
-                      value={parentSlug}
-                      onChange={(e) => setParentSlug(e.target.value)}
-                    >
-                      <option value="">None (Top Level)</option>
-                      <option value="products">Products</option>
-                      <option value="services">Services</option>
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-xs font-semibold">Visibility</Label>
-                    <select 
-                      className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
-                      value={isVisible ? "visible" : "hidden"}
-                      onChange={(e) => setIsVisible(e.target.value === "visible")}
-                    >
-                      <option value="visible">Visible in Menus</option>
-                      <option value="hidden">Hidden</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold">URL Slug</Label>
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground text-sm">{parentSlug ? `/${parentSlug}/` : '/'}</span>
-                    <Input value={slug} onChange={(e) => setSlug(e.target.value)} disabled={isSystemPage} />
-                  </div>
-                  {isSystemPage && <p className="text-xs text-muted-foreground mt-1">System page slug cannot be changed.</p>}
-                </div>
-              </Card>
-
-              {/* Visual sections */}
-              {(isSystemPage || sections.length > 0) ? (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm text-foreground">
-                      Page Sections ({sections.length})
-                      <span className="text-xs text-muted-foreground ml-2">Hover to edit • Drag to reorder</span>
-                    </h3>
-                    <Button variant="outline" size="sm" onClick={addSection}>
-                      <Plus className="h-3 w-3 mr-1" /> Add Section
-                    </Button>
-                  </div>
-                  {sections.map((section, idx) => renderVisualSection(section, idx))}
-                  {sections.length === 0 && (
-                    <Card className="p-12 text-center text-muted-foreground">
-                      <p className="mb-2">No sections yet.</p>
-                      <Button variant="outline" onClick={addSection}>
-                        <Plus className="h-4 w-4 mr-2" /> Add First Section
-                      </Button>
-                    </Card>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm text-foreground">Content Blocks ({blocks.length})</h3>
-                    <div className="flex gap-1">
-                      <Button variant="outline" size="sm" onClick={() => addBlock("heading")}><Type className="h-3 w-3 mr-1" /> H</Button>
-                      <Button variant="outline" size="sm" onClick={() => addBlock("paragraph")}><FileText className="h-3 w-3 mr-1" /> P</Button>
-                      <Button variant="outline" size="sm" onClick={() => addBlock("image")}><ImageIcon className="h-3 w-3 mr-1" /> Img</Button>
-                      <Button variant="outline" size="sm" onClick={() => addBlock("section")}><Layout className="h-3 w-3 mr-1" /> HTML</Button>
+                <TabsContent value="content" className="space-y-4 mt-4">
+                  {/* Page settings card */}
+                  <Card className="p-4 space-y-3">
+                    <div>
+                      <Label className="text-xs font-semibold">Page Title</Label>
+                      <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title..." />
                     </div>
-                  </div>
-                  {blocks.map((block, idx) => renderBlockEditor(block, idx))}
-                  {blocks.length === 0 && (
-                    <Card className="p-12 text-center text-muted-foreground">
-                      <p className="mb-2">No content blocks yet.</p>
-                      <p className="text-xs">Add blocks above to build your page.</p>
-                    </Card>
-                  )}
-                </div>
-              )}
-            </TabsContent>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-xs font-semibold">Parent Category</Label>
+                        <select
+                          className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                          value={parentSlug}
+                          onChange={(e) => setParentSlug(e.target.value)}
+                        >
+                          <option value="">None (Top Level)</option>
+                          <option value="products">Products</option>
+                          <option value="services">Services</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-semibold">Visibility</Label>
+                        <select
+                          className="w-full border rounded px-3 py-2 text-sm bg-background text-foreground"
+                          value={isVisible ? "visible" : "hidden"}
+                          onChange={(e) => setIsVisible(e.target.value === "visible")}
+                        >
+                          <option value="visible">Visible in Menus</option>
+                          <option value="hidden">Hidden</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold">URL Slug</Label>
+                      <div className="flex items-center gap-1">
+                        <span className="text-muted-foreground text-sm">{parentSlug ? `/${parentSlug}/` : '/'}</span>
+                        <Input value={slug} onChange={(e) => setSlug(e.target.value)} disabled={isSystemPage} />
+                      </div>
+                      {isSystemPage && <p className="text-xs text-muted-foreground mt-1">System page slug cannot be changed.</p>}
+                    </div>
+                  </Card>
 
-            <TabsContent value="seo" className="space-y-3 mt-4">
-              <Card className="p-4 space-y-4">
-                <div>
-                  <Label className="text-xs font-semibold">Meta Title</Label>
-                  <Input value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} placeholder="SEO title (60 chars max)" />
-                  <p className="text-xs text-muted-foreground mt-1">{metaTitle.length}/60</p>
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold">Meta Description</Label>
-                  <Textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="SEO description (160 chars max)" rows={3} />
-                  <p className="text-xs text-muted-foreground mt-1">{metaDescription.length}/160</p>
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold">OG Image URL</Label>
-                  <div className="flex gap-2">
-                    <Input value={ogImage} onChange={(e) => setOgImage(e.target.value)} placeholder="https://..." className="flex-1" />
-                    <label className="cursor-pointer">
-                      <Button variant="outline" size="sm" asChild><span><Upload className="h-3 w-3" /></span></Button>
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                        if (e.target.files?.[0]) handleImageUpload(e.target.files[0], setOgImage);
-                      }} />
-                    </label>
+                  {/* Visual sections */}
+                  {(isSystemPage || sections.length > 0) ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Page Sections ({sections.length})
+                          <span className="text-xs text-muted-foreground ml-2">Hover to edit</span>
+                        </h3>
+                        <Button variant="outline" size="sm" onClick={addSection}>
+                          <Plus className="h-3 w-3 mr-1" /> Add Section
+                        </Button>
+                      </div>
+                      {sections.map((section, idx) => renderVisualSection(section, idx))}
+                      {sections.length === 0 && (
+                        <Card className="p-12 text-center text-muted-foreground">
+                          <p className="mb-2">No sections yet.</p>
+                          <Button variant="outline" onClick={addSection}>
+                            <Plus className="h-4 w-4 mr-2" /> Add First Section
+                          </Button>
+                        </Card>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-sm text-foreground">Content Blocks ({blocks.length})</h3>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="sm" onClick={() => addBlock("heading")}><Type className="h-3 w-3 mr-1" /> H</Button>
+                          <Button variant="outline" size="sm" onClick={() => addBlock("paragraph")}><FileText className="h-3 w-3 mr-1" /> P</Button>
+                          <Button variant="outline" size="sm" onClick={() => addBlock("image")}><ImageIcon className="h-3 w-3 mr-1" /> Img</Button>
+                          <Button variant="outline" size="sm" onClick={() => addBlock("section")}><Layout className="h-3 w-3 mr-1" /> HTML</Button>
+                        </div>
+                      </div>
+                      {blocks.map((block, idx) => renderBlockEditor(block, idx))}
+                      {blocks.length === 0 && (
+                        <Card className="p-12 text-center text-muted-foreground">
+                          <p className="mb-2">No content blocks yet.</p>
+                          <p className="text-xs">Add blocks above to build your page.</p>
+                        </Card>
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="seo" className="space-y-3 mt-4">
+                  <Card className="p-4 space-y-4">
+                    <div>
+                      <Label className="text-xs font-semibold">Meta Title</Label>
+                      <Input value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} placeholder="SEO title (60 chars max)" />
+                      <p className="text-xs text-muted-foreground mt-1">{metaTitle.length}/60</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold">Meta Description</Label>
+                      <Textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="SEO description (160 chars max)" rows={3} />
+                      <p className="text-xs text-muted-foreground mt-1">{metaDescription.length}/160</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold">OG Image URL</Label>
+                      <div className="flex gap-2">
+                        <Input value={ogImage} onChange={(e) => setOgImage(e.target.value)} placeholder="https://..." className="flex-1" />
+                        <label className="cursor-pointer">
+                          <Button variant="outline" size="sm" asChild><span><Upload className="h-3 w-3" /></span></Button>
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            if (e.target.files?.[0]) handleImageUpload(e.target.files[0], setOgImage);
+                          }} />
+                        </label>
+                      </div>
+                      {ogImage && <img src={ogImage} alt="OG Preview" className="max-h-32 rounded-lg mt-2" />}
+                    </div>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
+
+          {/* Live Preview panel */}
+          {viewMode !== "editor" && previewUrl && (
+            <div className={`${viewMode === "split" ? "w-1/2" : "w-full"} bg-muted/30 flex flex-col`}>
+              <div className="flex items-center justify-between px-4 py-2 bg-muted border-b border-border">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-destructive/60" />
+                    <span className="w-3 h-3 rounded-full bg-gold/60" />
+                    <span className="w-3 h-3 rounded-full bg-green-500/60" />
                   </div>
-                  {ogImage && <img src={ogImage} alt="OG Preview" className="max-h-32 rounded-lg mt-2" />}
+                  <span className="text-xs text-muted-foreground font-mono">{previewUrl}</span>
                 </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Live Preview — Save to refresh</span>
+                  <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setPreviewKey(k => k + 1)}>
+                    ↺ Refresh
+                  </Button>
+                </div>
+              </div>
+              <iframe
+                key={previewKey}
+                ref={iframeRef}
+                src={previewUrl}
+                className="flex-1 w-full border-0"
+                title="Page Preview"
+                style={{ minHeight: "calc(100vh - 120px)" }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </AdminLayout>

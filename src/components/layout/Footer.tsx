@@ -171,6 +171,12 @@ export function Footer() {
                   <span className="text-sm">info@risingstarelevator.com</span>
                 </a>
               </li>
+              <li>
+                <Link to="/admin/login" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors">
+                  <LogIn className="h-5 w-5 text-gold flex-shrink-0" />
+                  <span className="text-sm">Admin Login</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

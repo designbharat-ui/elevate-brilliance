@@ -8,8 +8,16 @@ import elevator2 from "@/assets/elevator-2.jpeg";
 import elevator3 from "@/assets/elevator-3.jpeg";
 import elevator4 from "@/assets/elevator-4.jpeg";
 import elevator5 from "@/assets/elevator-5.jpeg";
+import { usePageContent } from "@/hooks/usePageContent";
 
-const productCategories = [
+const imageMap: Record<string, string> = {
+  "elevator-1": elevator1, "elevator-2": elevator2, "elevator-3": elevator3,
+  "elevator-4": elevator4, "elevator-5": elevator5,
+};
+
+const defaultImages = [elevator1, elevator2, elevator3, elevator4, elevator5];
+
+const defaultProductCategories = [
   { name: "Home Lift", slug: "home-lift", image: elevator1, category: "Residential", description: "Elegant elevators for villas and homes", specs: "4-6 Passengers | Up to 1.0 m/s" },
   { name: "Passenger Lift", slug: "passenger-lift", image: elevator2, category: "Commercial", description: "High-performance commercial elevators", specs: "8-24 Passengers | Up to 1.5 m/s" },
   { name: "Hospital Lift", slug: "hospital-lift", image: elevator3, category: "Medical", description: "Medical-grade stretcher elevators", specs: "Stretcher | Up to 1.5 m/s" },
@@ -26,11 +34,34 @@ const productCategories = [
 ];
 
 export default function Products() {
+  const { page, getField, getSectionFields } = usePageContent("products");
+
+  const heroLabel = getField("hero", "label", "Product Range");
+  const heroTitle = getField("hero", "title", "Complete Elevator");
+  const heroHighlight = getField("hero", "highlight_text", "Solutions");
+  const heroDescription = getField("hero", "description", "From home lifts to high-rise elevators, escalators to moving walks — we offer IS-compliant solutions for every vertical transportation need.");
+
+  const productsFields = getSectionFields("products_grid");
+  const productCategories = productsFields?.items?.length > 0
+    ? productsFields.items.map((item: any, i: number) => ({
+        name: item.name || item.title,
+        slug: item.slug,
+        image: item.image && item.image.startsWith("http") ? item.image : defaultImages[i % defaultImages.length],
+        category: item.category,
+        description: item.description,
+        specs: item.specs,
+      }))
+    : defaultProductCategories;
+
+  const ctaTitle = getField("cta", "title", "Need a Custom");
+  const ctaHighlight = getField("cta", "highlight_text", "Solution?");
+  const ctaDescription = getField("cta", "description", "Our experts can design and customize elevator solutions tailored to your specific requirements.");
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Elevators & Escalators - Complete Product Range"
-        description="Explore our complete range of elevators including home lifts, passenger lifts, hospital elevators, MRL lifts, escalators, and moving walks. IS-compliant solutions."
+        title={page?.meta_title || "Elevators & Escalators - Complete Product Range"}
+        description={page?.meta_description || "Explore our complete range of elevators including home lifts, passenger lifts, hospital elevators, MRL lifts, escalators, and moving walks. IS-compliant solutions."}
         keywords="home lift, passenger elevator, hospital lift, MRL elevator, escalator, moving walk, capsule lift, freight elevator India"
         canonicalUrl="/products"
       />
@@ -43,17 +74,11 @@ export default function Products() {
           </div>
           <div className="container relative z-10">
             <div className="max-w-3xl">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">
-                Product Range
-              </span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{heroLabel}</span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-                Complete Elevator{" "}
-                <span className="text-gradient-gold">Solutions</span>
+                {heroTitle}{" "}<span className="text-gradient-gold">{heroHighlight}</span>
               </h1>
-              <p className="text-primary-foreground/80 text-lg">
-                From home lifts to high-rise elevators, escalators to moving walks — 
-                we offer IS-compliant solutions for every vertical transportation need.
-              </p>
+              <p className="text-primary-foreground/80 text-lg">{heroDescription}</p>
             </div>
           </div>
         </section>
@@ -62,13 +87,12 @@ export default function Products() {
         <section className="section-padding bg-background">
           <div className="container">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {productCategories.map((product) => (
+              {productCategories.map((product: any) => (
                 <Link
                   key={product.slug}
                   to={`/products/${product.slug}`}
                   className="group relative bg-card rounded-lg overflow-hidden card-hover"
                 >
-                  {/* Image */}
                   <div className="aspect-[3/4] overflow-hidden">
                     <img
                       src={product.image}
@@ -77,28 +101,17 @@ export default function Products() {
                     />
                     <div className="image-overlay opacity-60 group-hover:opacity-80 transition-opacity" />
                   </div>
-
-                  {/* Category Badge */}
                   <div className="absolute top-4 left-4">
                     <span className="bg-gold/90 text-primary text-xs font-medium px-3 py-1 rounded-full">
                       {product.category}
                     </span>
                   </div>
-
-                  {/* Content Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
-                    <h3 className="font-display text-xl font-semibold mb-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-primary-foreground/80 text-sm mb-2 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <p className="text-gold text-xs font-medium mb-4">
-                      {product.specs}
-                    </p>
+                    <h3 className="font-display text-xl font-semibold mb-2">{product.name}</h3>
+                    <p className="text-primary-foreground/80 text-sm mb-2 line-clamp-2">{product.description}</p>
+                    <p className="text-gold text-xs font-medium mb-4">{product.specs}</p>
                     <span className="inline-flex items-center gap-1 text-gold font-medium text-sm group-hover:gap-2 transition-all">
-                      View Details
-                      <ArrowUpRight className="w-4 h-4" />
+                      View Details <ArrowUpRight className="w-4 h-4" />
                     </span>
                   </div>
                 </Link>
@@ -111,15 +124,11 @@ export default function Products() {
         <section className="section-padding bg-primary">
           <div className="container text-center">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
-              Need a Custom{" "}
-              <span className="text-gradient-gold">Solution?</span>
+              {ctaTitle}{" "}<span className="text-gradient-gold">{ctaHighlight}</span>
             </h2>
-            <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Our experts can design and customize elevator solutions tailored to your specific requirements.
-            </p>
+            <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">{ctaDescription}</p>
             <Link to="/contact" className="btn-gold inline-flex items-center">
-              Get Custom Quote
-              <ArrowRight className="ml-2 h-4 w-4" />
+              Get Custom Quote <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
         </section>
