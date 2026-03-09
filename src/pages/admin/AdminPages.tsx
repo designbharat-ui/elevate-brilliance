@@ -32,6 +32,13 @@ const SLUG_TO_ROUTE: Record<string, string> = {
   "sitemap": "/sitemap",
 };
 
+const getRouteForPage = (slug: string, parentSlug?: string | null): string => {
+  if (SLUG_TO_ROUTE[slug]) return SLUG_TO_ROUTE[slug];
+  if (parentSlug === "products") return `/products/${slug}`;
+  if (parentSlug === "services") return `/services/${slug}`;
+  return `/page/${slug}`;
+};
+
 interface Page {
   id: string;
   title: string;
