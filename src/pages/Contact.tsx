@@ -7,9 +7,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { usePageContent } from "@/hooks/usePageContent";
 
 export default function Contact() {
+  const { page, getField } = usePageContent("contact");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+
+  const heroLabel = getField("hero", "label", "Contact Us");
+  const heroTitle = getField("hero", "title", "Get In Touch");
+  const heroDescription = getField("hero", "description", "We're here to help with all your elevator needs.");
+
+  const contactFields = page?.sections.find(s => s.id === "contact-info")?.fields;
+  const address = contactFields?.address || "722A, Jaina Tower 2, District Centre Janakpuri, Delhi, India";
+  const phone = contactFields?.phone || "+91 8800732223";
+  const email = contactFields?.email || "info@risingstarelevator.com";
+  const hours = contactFields?.hours || "Mon-Sat: 9AM - 6PM";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +32,9 @@ export default function Contact() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Contact Us - Get Free Elevator Quote"
-        description="Contact Rising Star Elevator for free consultation and quote. 24/7 emergency support available. Delhi NCR based elevator company serving all of India."
-        keywords="contact elevator company, elevator quote, lift enquiry, elevator service Delhi, lift installation contact"
+        title={page?.meta_title || "Contact Us - Get Free Elevator Quote"}
+        description={page?.meta_description || "Contact Rising Star Elevator for free consultation and quote. 24/7 emergency support available."}
+        keywords="contact elevator company, elevator quote, lift enquiry, elevator service Delhi"
         canonicalUrl="/contact"
       />
       <Header />
@@ -30,11 +42,13 @@ export default function Contact() {
         <section className="relative py-24 bg-gradient-hero">
           <div className="container relative z-10">
             <div className="max-w-3xl">
-              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">Contact Us</span>
+              <span className="inline-block text-gold font-medium tracking-widest uppercase text-sm mb-4">{heroLabel}</span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-                Get In <span className="text-gradient-gold">Touch</span>
+                {heroTitle.includes("Touch") ? (
+                  <>Get In <span className="text-gradient-gold">Touch</span></>
+                ) : heroTitle}
               </h1>
-              <p className="text-primary-foreground/80 text-lg">We're here to help with all your elevator needs.</p>
+              <p className="text-primary-foreground/80 text-lg">{heroDescription}</p>
             </div>
           </div>
         </section>
@@ -60,10 +74,10 @@ export default function Contact() {
               <div className="space-y-6">
                 <h2 className="font-display text-2xl font-bold text-foreground mb-6">Contact Info</h2>
                 {[
-                  { icon: MapPin, title: "Address", content: "722A, Jaina Tower 2, District Centre Janakpuri, Delhi, India" },
-                  { icon: Phone, title: "Phone", content: "+91 8800732223" },
-                  { icon: Mail, title: "Email", content: "info@risingstarelevator.com" },
-                  { icon: Clock, title: "Working Hours", content: "Mon-Sat: 9AM - 6PM" },
+                  { icon: MapPin, title: "Address", content: address },
+                  { icon: Phone, title: "Phone", content: phone },
+                  { icon: Mail, title: "Email", content: email },
+                  { icon: Clock, title: "Working Hours", content: hours },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-4 p-4 bg-secondary rounded-lg">
                     <item.icon className="w-6 h-6 text-gold flex-shrink-0" />
