@@ -209,6 +209,8 @@ export default function AdminPageEditor() {
       meta_title: metaTitle || null,
       meta_description: metaDescription || null,
       og_image: ogImage || null,
+      parent_slug: parentSlug || null,
+      is_visible: isVisible,
       ...(isNew && { created_by: user?.id }),
     };
 
