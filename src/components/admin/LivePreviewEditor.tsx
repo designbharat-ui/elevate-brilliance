@@ -840,7 +840,7 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {f.images?.map((img: string, i: number) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden">
+                  <div key={i} className="aspect-square rounded-lg overflow-hidden relative group">
                     <EditableImage
                       src={typeof img === 'string' ? img : ''}
                       className="w-full h-full"
@@ -850,10 +850,45 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
                           onUpdateField(sid, "images", arr);
                         });
                       }}
-                      overlayText="Replace"
+                      overlayText="Change Image"
                     />
+                    {/* Delete button */}
+                    <button
+                      data-editable="true"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const arr = f.images.filter((_: any, idx: number) => idx !== i);
+                        onUpdateField(sid, "images", arr);
+                      }}
+                      className="absolute top-2 right-2 z-10 bg-destructive text-destructive-foreground p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </div>
                 ))}
+                {/* Add new image tile */}
+                <div className="aspect-square rounded-lg border-2 border-dashed border-gold/50 flex items-center justify-center cursor-pointer hover:border-gold hover:bg-gold/5 transition-all">
+                  <label className="cursor-pointer flex flex-col items-center gap-2 p-4">
+                    <div className="bg-gold/10 rounded-full p-3">
+                      <Plus className="h-6 w-6 text-gold" />
+                    </div>
+                    <span className="text-sm font-medium text-gold">Add Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          onImageUpload(e.target.files[0], (url) => {
+                            const arr = [...(f.images || []), url];
+                            onUpdateField(sid, "images", arr);
+                          });
+                        }
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </section>
