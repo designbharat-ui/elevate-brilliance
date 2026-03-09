@@ -105,6 +105,39 @@ export default function AdminMenus() {
 
   const renderMenuEditor = (menu: "header" | "footer", data: MenuData) => (
     <Card className="p-4 space-y-4">
+      {/* Quick Add from CMS Pages */}
+      {(productPages.length > 0 || servicePages.length > 0) && (
+        <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Quick Add from CMS Pages</p>
+          <div className="flex flex-wrap gap-2">
+            {productPages.map(p => (
+              <Button key={p.slug} variant="outline" size="sm" className="text-xs h-7"
+                onClick={() => {
+                  const setter = menu === "header" ? setHeaderMenu : setFooterMenu;
+                  setter(prev => ({
+                    ...prev,
+                    items: [...prev.items, { id: crypto.randomUUID(), label: p.title, href: `/products/${p.slug}` }],
+                  }));
+                }}>
+                + {p.title}
+              </Button>
+            ))}
+            {servicePages.map(p => (
+              <Button key={p.slug} variant="outline" size="sm" className="text-xs h-7"
+                onClick={() => {
+                  const setter = menu === "header" ? setHeaderMenu : setFooterMenu;
+                  setter(prev => ({
+                    ...prev,
+                    items: [...prev.items, { id: crypto.randomUUID(), label: p.title, href: `/services/${p.slug}` }],
+                  }));
+                }}>
+                + {p.title}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {data.items.map((item, idx) => (
           <div key={item.id} className="flex items-center gap-2 bg-background border border-border rounded p-2">
