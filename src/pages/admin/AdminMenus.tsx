@@ -26,16 +26,24 @@ export default function AdminMenus() {
   const [headerMenu, setHeaderMenu] = useState<MenuData>({ name: "header", items: [] });
   const [footerMenu, setFooterMenu] = useState<MenuData>({ name: "footer", items: [] });
   const [saving, setSaving] = useState(false);
+  const [productPages, setProductPages] = useState<{title: string; slug: string}[]>([]);
+  const [servicePages, setServicePages] = useState<{title: string; slug: string}[]>([]);
 
   useEffect(() => {
     const fetchMenus = async () => {
-      const { data } = await supabase.from("menus").select("*");
-      if (data) {
-        const header = data.find((m) => m.name === "header");
-        const footer = data.find((m) => m.name === "footer");
+      const [{ data: menuData }, { data: prodData }, { data: svcData }] = await Promise.all([
+        supabase.from("menus").select("*"),
+        supabase.from("pages").select("title, slug").eq("parent_slug", "products").eq("status", "published").order("page_order"),
+        supabase.from("pages").select("title, slug").eq("parent_slug", "services").eq("status", "published").order("page_order"),
+      ]);
+      if (menuData) {
+        const header = menuData.find((m) => m.name === "header");
+        const footer = menuData.find((m) => m.name === "footer");
         if (header) setHeaderMenu({ id: header.id, name: "header", items: (header.items as unknown as MenuItem[]) || [] });
         if (footer) setFooterMenu({ id: footer.id, name: "footer", items: (footer.items as unknown as MenuItem[]) || [] });
       }
+      if (prodData) setProductPages(prodData);
+      if (svcData) setServicePages(svcData);
     };
     fetchMenus();
   }, []);
