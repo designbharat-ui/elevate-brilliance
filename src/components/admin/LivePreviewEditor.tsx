@@ -642,16 +642,15 @@ export function LivePreviewEditor({ sections, onUpdateField, onImageUpload, sele
                     </div>
                   )}
                 </div>
-                {f.image !== undefined && (
-                  <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elegant">
-                    <EditableImage
-                      src={f.image}
-                      className="w-full h-full"
-                      onUpload={handleImageChange(sid, "image")}
-                      overlayText="Change Image"
-                    />
-                  </div>
-                )}
+                <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elegant">
+                  <EditableImage
+                    src={f.image || ""}
+                    className="w-full h-full"
+                    onUpload={handleImageChange(sid, "image")}
+                    overlayText={f.image ? "Change Image" : "Add Image"}
+                    showAddButton={!f.image}
+                  />
+                </div>
               </div>
             </div>
           </section>
