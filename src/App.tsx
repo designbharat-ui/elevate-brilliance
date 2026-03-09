@@ -73,6 +73,7 @@ const App = () => (
               <Route path="/get-quote" element={<GetQuote />} />
 
               {/* Admin Routes */}
+              <Route path="/admin/setup" element={<AdminSetup />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
