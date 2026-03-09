@@ -819,7 +819,7 @@ export default function AdminPageEditor() {
 
           <div className="flex items-center gap-2">
             {/* View mode toggle */}
-            {previewUrl && (
+            {(sections.length > 0 || isSystemPage) && (
               <div className="flex items-center gap-1 border border-border rounded-lg p-1">
                 <Button
                   variant={viewMode === "editor" ? "secondary" : "ghost"}
